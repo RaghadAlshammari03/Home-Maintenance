@@ -1,4 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:baligny/controller/provider/profileProvider/profileProvider.dart';
+import 'package:baligny/controller/services/userDataCRUDServices/userDataCRUDServices.dart';
 import 'package:baligny/model/userAddressModel.dart';
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
@@ -173,54 +176,164 @@ class _AddressScreenState extends State<AddressScreen> {
                                 ),
                               ),
                               SizedBox(height: 2.h),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 2.w,
-                                      vertical: 1.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8.sp),
-                                      color: greyShade1,
-                                    ),
-                                    child: Text(
-                                      'تفعيل كموقع افتراضي',
-                                      style: AppTextStyles.body14,
-                                    ),
-                                  ),
-                                  SizedBox(width: 2.w),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 2.w,
-                                      vertical: 1.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8.sp),
-                                      color: greyShade1,
-                                    ),
-                                    child: Text(
-                                      'تعديل',
-                                      style: AppTextStyles.body14,
-                                    ),
-                                  ),
-                                  SizedBox(width: 2.w),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 2.w,
-                                      vertical: 1.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8.sp),
-                                      color: greyShade1,
-                                    ),
-                                    child: Text(
-                                      'حذف',
-                                      style: AppTextStyles.body14,
-                                    ),
-                                  ),
-                                ],
+
+                              Builder(
+                                builder: (context) {
+                                  if (address.isActive) {
+                                    return Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        InkWell(
+                                          onTap: () async {
+                                            final confirm = await showDialog<bool>(
+                                              context: context,
+                                              builder: (dialogContext) => AlertDialog(
+                                                title: const Text(
+                                                  'تأكيد الحذف',
+                                                ),
+                                                content: const Text(
+                                                  'هذا العنوان مفعل حالياً، هل ترغب بحذفه؟ سيتم إلغاء تفعيله أولاً.',
+                                                ),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(
+                                                          dialogContext,
+                                                          false,
+                                                        ),
+                                                    child: const Text('إلغاء'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(
+                                                          dialogContext,
+                                                          true,
+                                                        ),
+                                                    child: const Text('حذف'),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+
+                                            if (confirm == true) {
+                                              // 1. Deactivate it first
+                                              await UserDataCRUDServices.setActiveStatusById(
+                                                address.addressID,
+                                                false,
+                                              );
+
+                                              // 2. Delete it
+                                              await UserDataCRUDServices.deleteAddress(
+                                                address.addressID,
+                                              );
+
+                                              // 3. Refresh the list
+                                              context
+                                                  .read<ProfileProvider>()
+                                                  .fetchUserAddress();
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 2.w,
+                                              vertical: 1.h,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.sp),
+                                              color: greyShade1,
+                                            ),
+                                            child: Text(
+                                              'حذف',
+                                              style: AppTextStyles.body16,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    return Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        InkWell(
+                                          onTap: () async {
+                                            await UserDataCRUDServices.setActiveAddress(
+                                              address,
+                                              context,
+                                            );
+                                            context
+                                                .read<ProfileProvider>()
+                                                .fetchUserAddress();
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 2.w,
+                                              vertical: 1.h,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.sp),
+                                              color: greyShade1,
+                                            ),
+                                            child: Text(
+                                              'تفعيل كموقع افتراضي',
+                                              style: AppTextStyles.body16,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: 2.w),
+                                        InkWell(
+                                          onTap: () async {
+                                            final confirm = await showDialog<bool>(
+                                              context: context,
+                                              builder: (_) => AlertDialog(
+                                                title: const Text(
+                                                  'تأكيد الحذف',
+                                                ),
+                                                content: const Text(
+                                                  'هل أنت متأكد أنك تريد حذف هذا العنوان؟',
+                                                ),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(
+                                                          context,
+                                                          true,
+                                                        ),
+                                                    child: const Text('حذف'),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                            if (confirm == true) {
+                                              await UserDataCRUDServices.deleteAddress(
+                                                address.addressID,
+                                              );
+                                              context
+                                                  .read<ProfileProvider>()
+                                                  .fetchUserAddress();
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                              horizontal: 2.w,
+                                              vertical: 1.h,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.sp),
+                                              color: greyShade1,
+                                            ),
+                                            child: Text(
+                                              'حذف',
+                                              style: AppTextStyles.body16,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  }
+                                },
                               ),
                             ],
                           ),

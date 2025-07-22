@@ -1,3 +1,7 @@
+// ignore_for_file: unnecessary_null_comparison
+
+import 'package:baligny/controller/provider/profileProvider/profileProvider.dart';
+import 'package:baligny/model/userAddressModel.dart';
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
 import 'package:baligny/view/cart/cart_page.dart';
@@ -8,6 +12,7 @@ import 'package:baligny/view/home/viewAddressOverlayScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -83,33 +88,47 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: grey,
                         ),
                       ),
-                      TextButton.icon(
-                        onPressed: () {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+
+                      Consumer<ProfileProvider>(
+                        builder: (context, provider, child) {
+                          UserAddressModel? activeAddress;
+                            try {
+                              activeAddress = provider.addresses.firstWhere((address) => address.isActive);
+                            } catch (e) {
+                              activeAddress = null;
+                            }
+                          return TextButton.icon(
+                            onPressed: () {
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(20),
+                                  ),
+                                ),
+                                builder: (_) =>
+                                    const ViewAddressOverlayScreen(),
+                              );
+                            },
+                            label: Row(
+                              children: [
+                                Text(
+                                  activeAddress != null
+                                      ? '${activeAddress.addressTitle} - ${activeAddress.roomNo} - ${activeAddress.apartment}'
+                                      : 'لا يوجد عنوان افتراضي',
+                                  style: AppTextStyles.body16.copyWith(color: white),
+                                ),
+                                SizedBox(width: 1.w),
+                                FaIcon(
+                                  FontAwesomeIcons.chevronDown,
+                                  size: 1.h,
+                                  color: white,
+                                ),
+                              ],
                             ),
-                            builder: (_) => const ViewAddressOverlayScreen(),
                           );
                         },
-                        label: Row(
-                          children: [
-                            Text(
-                              'العنوان الحالي',
-                              style: AppTextStyles.body16.copyWith(
-                                color: white,
-                              ),
-                            ),
-                            SizedBox(width: 1.w),
-                            FaIcon(
-                              FontAwesomeIcons.chevronDown,
-                              size: 1.h,
-                              color: white,
-                            ),
-                          ],
-                        ),
                       ),
                     ],
                   ),

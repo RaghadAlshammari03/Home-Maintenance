@@ -1,4 +1,7 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:baligny/controller/provider/profileProvider/profileProvider.dart';
+import 'package:baligny/controller/services/userDataCRUDServices/userDataCRUDServices.dart';
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
 import 'package:baligny/view/user_account/addAddresssScreen.dart';
@@ -40,7 +43,7 @@ class _ViewAddressOverlayScreenState extends State<ViewAddressOverlayScreen> {
           bottom: MediaQuery.of(context).viewInsets.bottom + 2.h,
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min, 
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Align(
@@ -75,41 +78,62 @@ class _ViewAddressOverlayScreenState extends State<ViewAddressOverlayScreen> {
                   );
                 } else {
                   return ListView.builder(
-                    shrinkWrap: true, 
+                    shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
                     itemCount: provider.addresses.length,
                     itemBuilder: (context, index) {
                       final address = provider.addresses[index];
-                      return Card(
-                        margin: EdgeInsets.symmetric(vertical: 1.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.sp),
-                        ),
-                        elevation: 2,
-                        child: Padding(
-                          padding: EdgeInsets.all(2.h),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                address.addressTitle,
-                                style: AppTextStyles.heading20,
-                              ),
-                              SizedBox(height: 1.h),
-                              Row(
-                                children: [
-                                  Text(
-                                    address.roomNo,
-                                    style: AppTextStyles.body14,
-                                  ),
-                                  SizedBox(width: 1.h),
-                                  Text(
-                                    ', ${address.apartment}',
-                                    style: AppTextStyles.body14,
-                                  ),
-                                ],
-                              ),
-                            ],
+                      return InkWell(
+                        onTap: () async {
+                          await UserDataCRUDServices.setActiveAddress(
+                            address,
+                            context,
+                          );
+                          context.read<ProfileProvider>().fetchUserAddress();
+                        },
+                        child: Card(
+                          margin: EdgeInsets.symmetric(vertical: 1.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.sp),
+                          ),
+                          elevation: 2,
+                          child: Padding(
+                            padding: EdgeInsets.all(2.h),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      address.addressTitle,
+                                      style: AppTextStyles.heading20,
+                                    ),
+                                    CircleAvatar(
+                                      radius: 1.h,
+                                      backgroundColor: address.isActive
+                                          ? success
+                                          : transparent,
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 1.h),
+                                Row(
+                                  children: [
+                                    Text(
+                                      address.roomNo,
+                                      style: AppTextStyles.body14,
+                                    ),
+                                    SizedBox(width: 1.h),
+                                    Text(
+                                      ', ${address.apartment}',
+                                      style: AppTextStyles.body14,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );
