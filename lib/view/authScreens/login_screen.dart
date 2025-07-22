@@ -1,8 +1,14 @@
+// ignore_for_file: avoid_print, use_build_context_synchronously
+
+import 'package:baligny/controller/provider/authProvider/mobileAuthProvider.dart';
+import 'package:baligny/controller/services/authServices/mobileAuthServices.dart';
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:sizer/sizer.dart'; 
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:sizer/sizer.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,11 +20,39 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   Country? selectedCountry;
   TextEditingController phoneController = TextEditingController();
+  bool receiveOTPButtonPressed = false;
+
+  String _normalizedPhoneNumber() {
+    String phone = phoneController.text.trim();
+    // Remove any leading 0
+    if (phone.startsWith('0')) {
+      phone = phone.substring(1);
+    }
+
+    // Remove leading '+'
+    if (phone.startsWith('+')) {
+      phone = phone.substring(1);
+    }
+
+    // Remove leading country code
+    final countryCode = selectedCountry!.phoneCode;
+    if (phone.startsWith(countryCode)) {
+      phone = phone.substring(countryCode.length);
+    }
+    
+    return phone;
+  }
 
   @override
   void initState() {
     super.initState();
     selectedCountry = Country.parse('SA'); // Saudi Arabia by default
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        receiveOTPButtonPressed = false;
+      });
+    });
   }
 
   @override
@@ -138,7 +172,86 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(height: 4.h),
 
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () async {
+                ScaffoldMessenger.of(context).clearSnackBars();
+                setState(() {
+                  receiveOTPButtonPressed = true;
+                });
+
+                // check if the input field is empty
+                if (_normalizedPhoneNumber().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('الرجاء إدخال رقم الهاتف'),
+                      backgroundColor: red,
+                    ),
+                  );
+                  setState(() {
+                    receiveOTPButtonPressed = false;
+                  });
+                  return;
+                }
+
+                final fullPhoneNumber =
+                    '+${selectedCountry!.phoneCode}${_normalizedPhoneNumber()}';
+
+                context.read<MobileAuthProvider>().updateMobileNumber(
+                  fullPhoneNumber,
+                );
+
+                try {
+                  await MobileAuthServices.receiveOTP(
+                    context: context,
+                    mobileNumber: fullPhoneNumber,
+                  );
+                } on FirebaseAuthException catch (e) {
+                  print(
+                    'FirebaseAuthException caught: code=${e.code}, message=${e.message}',
+                  );
+
+                  setState(() {
+                    receiveOTPButtonPressed = false;
+                  });
+
+                  // to check if the number is in invalid format
+                  if (e.code == 'invalid-phone-number') {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'الرجاء كتابة الرقم بطريقة صحيحه، بدون رقم الصفر',
+                          ),
+                          backgroundColor: red,
+                        ),
+                      );
+                      phoneController.clear();
+                    }
+                  } else {
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('حدث خطأ، الرجاء المحاولة مرة أخرى'),
+                          backgroundColor: red,
+                        ),
+                      );
+                    }
+                  }
+                } catch (e, st) {
+                  print('Generic error caught: $e\nStack trace:\n$st');
+
+                  if (mounted) {
+                    setState(() {
+                      receiveOTPButtonPressed = false;
+                    });
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('حدث خطأ غير متوقع، حاول لاحقا'),
+                        backgroundColor: red,
+                      ),
+                    );
+                  }
+                }
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: darkBlue,
                 minimumSize: Size(90.w, 6.h),
@@ -146,17 +259,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   borderRadius: BorderRadius.circular(12.sp),
                 ),
               ),
-              child: Stack(
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      'المتابعة',
-                      style: AppTextStyles.body16.copyWith(color: white),
+              child: receiveOTPButtonPressed
+                  ? CircularProgressIndicator(color: white)
+                  : Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            'المتابعة',
+                            style: AppTextStyles.body16.copyWith(color: white),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ],
-              ),
             ),
           ],
         ),

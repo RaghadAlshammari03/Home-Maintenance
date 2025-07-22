@@ -1,5 +1,10 @@
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
+import 'package:baligny/view/authScreens/logOutScreen.dart';
+import 'package:baligny/view/user_account/ContactUsScreen.dart';
+import 'package:baligny/view/user_account/addressScreen.dart';
+import 'package:baligny/view/user_account/paymentMethodsScreen.dart';
+import 'package:baligny/view/user_account/addAddresssScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sizer/sizer.dart';
@@ -13,12 +18,8 @@ class AccountScreen extends StatefulWidget {
 
 class _AccountScreenState extends State<AccountScreen> {
   List account = [
-    [FontAwesomeIcons.user, 'حسابي'],
-    [FontAwesomeIcons.cartShopping, 'طلباتي'],
     [FontAwesomeIcons.locationDot, 'سجل العناوين'],
     [FontAwesomeIcons.creditCard, 'طرق الدفع'],
-    [FontAwesomeIcons.bell, 'الاشعارات'],
-    [FontAwesomeIcons.language, 'اللغة'],
     [FontAwesomeIcons.circleInfo, 'تواصل معنا'],
     [FontAwesomeIcons.rightFromBracket, 'تسجيل الخروج'],
   ];
@@ -48,7 +49,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   ),
                   SizedBox(width: 2.w),
                   Text(
-                    'اسم المستخدم',
+                    'رقم المستخدم',
                     style: AppTextStyles.body16Bold.copyWith(
                       color: white,
                       fontWeight: FontWeight.bold,
@@ -80,9 +81,91 @@ class _AccountScreenState extends State<AccountScreen> {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: FaIcon(account[index][0], size: 3.h, color: black),
-                    title: Text(account[index][1], style: AppTextStyles.body14),
+                  return Padding(
+                    padding: EdgeInsets.symmetric(vertical: 1.h),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 2.h,
+                          horizontal: 4.w,
+                        ),
+                        backgroundColor: white,
+                        foregroundColor: black,
+                        elevation: 3,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      onPressed: () {
+                        switch (index) {
+                          case 0:
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const AddressScreen(),
+                              ),
+                            );
+                            break;
+                          case 1:
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const PaymentMethods(),
+                              ),
+                            );
+                            break;
+                          case 2:
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ContactUs(),
+                              ),
+                            );
+                            break;
+                          case 3:
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text('تأكيد تسجيل الخروج'),
+                                content: const Text(
+                                  'هل أنت متأكد أنك تريد تسجيل الخروج؟',
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('إلغاء'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      LogOut(context);
+                                    },
+                                    child: const Text('خروج'),
+                                  ),
+                                ],
+                              ),
+                            );
+                            break;
+                        }
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          FaIcon(
+                            account[index][0],
+                            size: 2.8.h,
+                            color: lightOrange,
+                          ),
+                          SizedBox(width: 2.w),
+                          Text(
+                            account[index][1],
+                            style: AppTextStyles.body16.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   );
                 },
               ),

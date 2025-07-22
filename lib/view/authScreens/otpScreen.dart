@@ -1,10 +1,14 @@
 import 'dart:async';
 
+import 'package:baligny/controller/provider/authProvider/mobileAuthProvider.dart';
+import 'package:baligny/controller/services/authServices/mobileAuthServices.dart';
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
+import 'package:baligny/view/authScreens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 class OTPScreen extends StatefulWidget {
@@ -52,7 +56,12 @@ class _OTPScreenState extends State<OTPScreen> {
               left: 10.w,
               bottom: 3.h,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: greyShade3,
                   shape: CircleBorder(),
@@ -70,9 +79,14 @@ class _OTPScreenState extends State<OTPScreen> {
               right: 3.w,
               bottom: 3.h,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  MobileAuthServices.verifyOTP(
+                    context: context,
+                    otp: otpController.text.trim(),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: greyShade3,
+                  backgroundColor: darkBlue,
                   shape: StadiumBorder(),
                   padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
                   elevation: 2,
@@ -81,13 +95,13 @@ class _OTPScreenState extends State<OTPScreen> {
                   children: [
                     Text(
                       'التالي',
-                      style: AppTextStyles.body16.copyWith(color: black),
+                      style: AppTextStyles.body16.copyWith(color: white),
                     ),
                     SizedBox(width: 3.w),
                     FaIcon(
                       FontAwesomeIcons.arrowRight,
                       size: 3.h,
-                      color: black,
+                      color: white,
                     ),
                   ],
                 ),
@@ -101,8 +115,8 @@ class _OTPScreenState extends State<OTPScreen> {
             SizedBox(height: 3.h),
 
             Text(
-              'أدخل رمز التحقق',
-              style: AppTextStyles.heading22,
+              ' أدخل رمز التحقق المرسل إلى ${context.read<MobileAuthProvider>().mobileNumber!}',
+              style: AppTextStyles.heading20,
               textAlign: TextAlign.right,
             ),
             SizedBox(height: 0.5.h),
@@ -116,15 +130,15 @@ class _OTPScreenState extends State<OTPScreen> {
 
             PinCodeTextField(
               appContext: context,
-              length: 5,
+              length: 6,
               obscureText: false,
               animationType: AnimationType.fade,
               cursorColor: black,
               pinTheme: PinTheme(
                 shape: PinCodeFieldShape.box,
                 borderRadius: BorderRadius.circular(5),
-                fieldHeight: 72,
-                fieldWidth: 63,
+                fieldHeight: 62,
+                fieldWidth: 53,
                 inactiveFillColor: greyShade3,
                 selectedFillColor: white,
                 activeFillColor: white,

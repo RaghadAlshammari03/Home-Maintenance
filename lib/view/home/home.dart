@@ -4,6 +4,7 @@ import 'package:baligny/view/cart/cart_page.dart';
 import 'package:baligny/view/services/Electricity_page.dart';
 import 'package:baligny/view/services/air_condition_page.dart';
 import 'package:baligny/view/services/plumbing_page.dart';
+import 'package:baligny/view/home/viewAddressOverlayScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -55,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
-            toolbarHeight: 80,
+            toolbarHeight: 60,
             backgroundColor: lightOrange,
             elevation: 0,
             shape: const RoundedRectangleBorder(
@@ -71,14 +72,6 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'أهلاً بك، اسم اليوزر',
-                    style: AppTextStyles.heading20.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
                   Row(
                     children: [
                       CircleAvatar(
@@ -90,16 +83,33 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: grey,
                         ),
                       ),
-                      SizedBox(width: 1.w),
-                      Text(
-                        'العنوان الحالي',
-                        style: AppTextStyles.body16.copyWith(color: white),
-                      ),
-                      SizedBox(width: 1.w),
-                      FaIcon(
-                        FontAwesomeIcons.chevronDown,
-                        size: 1.5.h,
-                        color: white,
+                      TextButton.icon(
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                            ),
+                            builder: (_) => const ViewAddressOverlayScreen(),
+                          );
+                        },
+                        label: Row(
+                          children: [
+                            Text(
+                              'العنوان الحالي',
+                              style: AppTextStyles.body16.copyWith(
+                                color: white,
+                              ),
+                            ),
+                            SizedBox(width: 1.w),
+                            FaIcon(
+                              FontAwesomeIcons.chevronDown,
+                              size: 1.h,
+                              color: white,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
@@ -118,18 +128,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                   child: FaIcon(
-                      FontAwesomeIcons.cartShopping,  
-                      color: Colors.white,
-                    ),
+                    FontAwesomeIcons.cartShopping,
+                    color: Colors.white,
+                  ),
                 ),
-              ), 
+              ),
             ],
           ),
           body: ListView(
             physics: BouncingScrollPhysics(),
             padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 2.h),
             children: [
-              SizedBox(height: 2.h),
+              SizedBox(height: 1.h),
               // Carousel Slider
               Column(
                 children: [

@@ -23,6 +23,20 @@ dependencies:
   smooth_page_indicator: ^1.2.1
   flutter_rating_bar: ^4.0.1
   flutter_cart: ^0.0.9
+  firebase_core: ^3.15.1
+  firebase_auth: ^5.6.2
+  page_transition: ^2.2.1
+  provider: ^6.1.5
+  google_maps_flutter: ^2.12.3
+  flutter_geofire: ^2.0.6
+  geolocator: ^14.0.2
+  json_serializable: ^6.9.5
+  cloud_firestore: ^5.6.11
+  fluttertoast: ^8.2.12
+  flutter_styled_toast: ^2.2.1
+  dropdown_button2: ^2.3.9
+  uuid: ^4.5.1
+  modal_bottom_sheet: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -40,14 +54,14 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/splashScreenImage/splashScreen.jpeg
 
 
   fonts:
     - family: BalignyMedium
       fonts:
-        - asset: lib\assets\fonts\BalignyMedium.otf
+        - asset: assets\fonts\BalignyMedium.otf
     
     - family: BalignyBold
       fonts:
-        - asset: lib\assets\fonts\BalignyBold.otf
-
+        - asset: assets\fonts\BalignyBold.otf
