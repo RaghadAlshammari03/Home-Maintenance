@@ -1,10 +1,10 @@
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
-import 'package:baligny/view/authScreens/logOutScreen.dart';
+import 'package:baligny/view/user_account/logOutScreen.dart';
 import 'package:baligny/view/user_account/ContactUsScreen.dart';
 import 'package:baligny/view/user_account/addressScreen.dart';
 import 'package:baligny/view/user_account/paymentMethodsScreen.dart';
-import 'package:baligny/view/user_account/addAddresssScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sizer/sizer.dart';
@@ -23,6 +23,10 @@ class _AccountScreenState extends State<AccountScreen> {
     [FontAwesomeIcons.circleInfo, 'تواصل معنا'],
     [FontAwesomeIcons.rightFromBracket, 'تسجيل الخروج'],
   ];
+
+  final String userNumber =
+      FirebaseAuth.instance.currentUser?.phoneNumber ?? 'الرقم غير متوفر';
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -49,7 +53,7 @@ class _AccountScreenState extends State<AccountScreen> {
                   ),
                   SizedBox(width: 2.w),
                   Text(
-                    'رقم المستخدم',
+                    userNumber,
                     style: AppTextStyles.body16Bold.copyWith(
                       color: white,
                       fontWeight: FontWeight.bold,

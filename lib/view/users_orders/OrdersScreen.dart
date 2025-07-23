@@ -1,14 +1,14 @@
 import 'package:baligny/utils/textStyles.dart';
 import 'package:flutter/material.dart';
 
-class OrdersScreens extends StatefulWidget {
-  const OrdersScreens({super.key});
+class OrdersScreen extends StatefulWidget {
+  const OrdersScreen({super.key});
 
   @override
-  State<OrdersScreens> createState() => _OrdersScreensState();
+  State<OrdersScreen> createState() => _OrdersScreensState();
 }
 
-class _OrdersScreensState extends State<OrdersScreens> {
+class _OrdersScreensState extends State<OrdersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

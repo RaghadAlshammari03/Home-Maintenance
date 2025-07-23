@@ -3,7 +3,7 @@ import 'package:baligny/utils/textStyles.dart';
 import 'package:baligny/view/home/home.dart';
 import 'package:baligny/view/special_offers/specialOffersScreen.dart';
 import 'package:baligny/view/user_account/accountScreen.dart';
-import 'package:baligny/view/users_orders/OrdersScreens.dart';
+import 'package:baligny/view/users_orders/OrdersScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
@@ -24,7 +24,7 @@ class _BottomNavigationBarBalignyState
     return [
       const HomeScreen(),
       const SpecialOffersScreen(),
-      const OrdersScreens(),
+      const OrdersScreen(),
       const AccountScreen(),
     ];
   }

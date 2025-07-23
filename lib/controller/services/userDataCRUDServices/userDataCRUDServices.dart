@@ -9,7 +9,6 @@ import 'package:baligny/model/userModel.dart';
 import 'package:baligny/view/signInLogicScreen/signInLogicScreen.dart';
 import 'package:baligny/widgets/toastService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';

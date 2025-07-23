@@ -28,8 +28,8 @@ class _HomeScreenState extends State<HomeScreen> {
   int activeIndex = 0;
 
   List<String> imgList = [
-    'assets/images/sliderImage1.jpeg',
-    'assets/images/sliderImage2.jpeg',
+    'assets/images/imageSliders/sliderImage1.jpeg',
+    'assets/images/imageSliders/sliderImage2.jpeg',
   ];
 
   @override

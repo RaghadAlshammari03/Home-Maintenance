@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:baligny/constant/constant.dart';
 import 'package:baligny/controller/provider/authProvider/mobileAuthProvider.dart';
+import 'package:baligny/controller/services/pushNotificationServices/pushNotificationServices.dart';
 import 'package:baligny/view/authScreens/login_screen.dart';
 import 'package:baligny/view/authScreens/otpScreen.dart';
 import 'package:baligny/view/bottomNavigation/bottomNavigationBar.dart';
@@ -95,6 +96,7 @@ class MobileAuthServices {
             value.size > 0 ? userIsRegistered = true : userIsRegistered = false;
             log('User is Registered = $userIsRegistered');
             if (userIsRegistered) {
+              PushNotificationServices.initializeFCM();
               Navigator.pushAndRemoveUntil(
                 context,
                 PageTransition(
