@@ -54,6 +54,7 @@ class DefaultFirebaseOptions {
     appId: '1:824657330473:android:016cb8a8d4ea7e59dff738',
     messagingSenderId: '824657330473',
     projectId: 'baligny-6cec8',
+    databaseURL: 'https://baligny-6cec8-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'baligny-6cec8.firebasestorage.app',
   );
 
@@ -62,7 +63,9 @@ class DefaultFirebaseOptions {
     appId: '1:824657330473:ios:84dc22a210ce32b3dff738',
     messagingSenderId: '824657330473',
     projectId: 'baligny-6cec8',
+    databaseURL: 'https://baligny-6cec8-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'baligny-6cec8.firebasestorage.app',
     iosBundleId: 'com.example.baligny',
   );
+
 }
