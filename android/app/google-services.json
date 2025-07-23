@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "824657330473",
+    "firebase_url": "https://baligny-6cec8-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "baligny-6cec8",
+    "storage_bucket": "baligny-6cec8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:824657330473:android:016cb8a8d4ea7e59dff738",
+        "android_client_info": {
+          "package_name": "com.example.baligny"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpFjHnkTC-HOde_D0Vgdl8ey56psvXG3Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:824657330473:android:015ef38ca961b9a0dff738",
+        "android_client_info": {
+          "package_name": "com.example.baligny_technician"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDpFjHnkTC-HOde_D0Vgdl8ey56psvXG3Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
