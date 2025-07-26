@@ -1,7 +1,15 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'dart:developer';
+
+import 'package:baligny/constant/constant.dart';
+import 'package:baligny/controller/services/pushNotificationServices/pushNotificationServices.dart';
+import 'package:baligny/model/technicianModel/technicianModel.dart';
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
 import 'package:baligny/view/services/services_data/data.dart';
 import 'package:baligny/view/services/widgets/service_card.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 class AirConditionPage extends StatefulWidget {
@@ -20,7 +28,10 @@ class _AirConditionPageState extends State<AirConditionPage> {
         appBar: AppBar(
           title: Text(
             'خدمات التكييف',
-            style: AppTextStyles.heading20Bold.copyWith(color: white, fontWeight: FontWeight.bold),
+            style: AppTextStyles.heading20Bold.copyWith(
+              color: white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           titleSpacing: 00.0,
           centerTitle: true,
@@ -41,12 +52,9 @@ class _AirConditionPageState extends State<AirConditionPage> {
           child: ListView.builder(
             physics: const BouncingScrollPhysics(),
             itemCount: airConditionServicesList.length,
-            itemBuilder: (context, index) {
+             itemBuilder: (context, index) {
               final service = airConditionServicesList[index];
-              return ServiceCard(
-                title: service.serviceName,
-                description: service.serviceDetail,
-              );
+              return ServiceCard(service: service);
             },
           ),
         ),

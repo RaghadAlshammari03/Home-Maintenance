@@ -44,10 +44,7 @@ class _PlumbingPageState extends State<PlumbingPage> {
             itemCount: plumbingServicesList.length,
             itemBuilder: (context, index) {
               final service = plumbingServicesList[index];
-              return ServiceCard(
-                title: service.serviceName,
-                description: service.serviceDetail,
-              );
+              return ServiceCard(service: service);
             },
           ),
         ),

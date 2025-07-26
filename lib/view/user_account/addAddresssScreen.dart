@@ -5,7 +5,7 @@ import 'package:baligny/constant/constant.dart';
 import 'package:baligny/controller/provider/profileProvider/profileProvider.dart';
 import 'package:baligny/controller/services/locationServices/locationServices.dart';
 import 'package:baligny/controller/services/userDataCRUDServices/userDataCRUDServices.dart';
-import 'package:baligny/model/userAddressModel.dart';
+import 'package:baligny/model/userAddressModel/userAddressModel.dart';
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
 import 'package:baligny/widgets/toastService.dart';

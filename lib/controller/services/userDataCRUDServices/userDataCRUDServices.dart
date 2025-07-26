@@ -4,8 +4,8 @@ import 'dart:developer';
 
 import 'package:baligny/constant/constant.dart';
 import 'package:baligny/controller/provider/profileProvider/profileProvider.dart';
-import 'package:baligny/model/userAddressModel.dart';
-import 'package:baligny/model/userModel.dart';
+import 'package:baligny/model/userAddressModel/userAddressModel.dart';
+import 'package:baligny/model/userModel/userModel.dart';
 import 'package:baligny/view/signInLogicScreen/signInLogicScreen.dart';
 import 'package:baligny/widgets/toastService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

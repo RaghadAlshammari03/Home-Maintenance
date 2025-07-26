@@ -1,7 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:baligny/controller/provider/profileProvider/profileProvider.dart';
-import 'package:baligny/model/userAddressModel.dart';
+import 'package:baligny/model/userAddressModel/userAddressModel.dart';
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
 import 'package:baligny/view/cart/cart_page.dart';

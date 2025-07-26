@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart'; 
 import 'package:baligny/controller/services/userDataCRUDServices/userDataCRUDServices.dart';
-import 'package:baligny/model/userAddressModel.dart';
+import 'package:baligny/model/userAddressModel/userAddressModel.dart';
 
 class ProfileProvider extends ChangeNotifier {
   List<UserAddressModel> addresses = [];

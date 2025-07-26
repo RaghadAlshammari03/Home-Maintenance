@@ -2,9 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:baligny/constant/constant.dart';
-import 'package:baligny/controller/services/APIsKeys/APIs.dart';
-import 'package:baligny/controller/services/APIsKeys/keys.dart';
-import 'package:baligny/model/technicianModel/technicianModel.dart';
+import 'package:baligny/controller/services/APIsKeys/firebaseToken.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 
@@ -28,11 +26,19 @@ class PushNotificationServices {
   }
 
   static Future getToken() async {
-    String? token = await firebaseMessaging.getToken();
-    log('FCM token: $token');
-    await firestore.collection('User').doc(auth.currentUser!.uid).update({
-      'cloudMessagingToken': token,
-    });
+    try {
+      String? token = await firebaseMessaging.getToken();
+      if (token != null) {
+        log('FCM token: $token');
+        await firestore.collection('User').doc(auth.currentUser!.uid).update({
+          'cloudMessagingToken': token,
+        });
+      } else {
+        log('FCM token is null');
+      }
+    } catch (e) {
+      log('Error getting FCM token: $e');
+    }
   }
 
   static subscribeToNotification() {
@@ -46,44 +52,45 @@ class PushNotificationServices {
     subscribeToNotification();
   }
 
-  static sendPushNotificationToTechnician(
-    List<TechnicianModel> technician,
-    String service,
-  ) async {
-    for (var technician in technician) {
-      try {
-        final api = Uri.parse(APIs.pushNotificationAPI());
-        var body = jsonEncode({
-          "to": technician.cloudMessagingToken,
-          "notification": {
-            "body": "New Service Request",
-            "title": "Service Request",
-          },
-        });
-        var headers = {
-          'Content-Type': 'application/json',
-          'Authorization': 'key=$fcmServerKey',
-        };
-        var response = await http
-            .post(api, headers: headers, body: body)
-            .then((value) {
-              log('Successfully Send the Push Notification');
-            })
-            .timeout(
-              const Duration(seconds: 60),
-              onTimeout: () {
-                log('Connection Timed out');
-                throw TimeoutException('Connection Timed out');
-              },
-            )
-            .onError((error, stackTrace) {
-              log(error.toString());
-              throw Exception(error);
-            });
-      } catch (error) {
-        log(error.toString());
-        throw Exception(error);
-      }
+  Future<void> sendNotificationToTechnician({
+    required String technicianToken,
+    required String serviceTitle,
+    required String serviceDescription,
+  }) async {
+    final accessToken = await AccessTokenFirebase().getAccessToken();
+
+    final url = Uri.parse(
+      'https://fcm.googleapis.com/v1/projects/baligny-6cec8/messages:send',
+    );
+
+    final message = {
+      "message": {
+        "token": technicianToken,
+        "notification": {
+          "title": "طلب جديد: $serviceTitle",
+          "body": serviceDescription,
+        },
+        "data": {
+          "click_action": "FLUTTER_NOTIFICATION_CLICK",
+          "type": "technician_request",
+        },
+      },
+    };
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(message),
+    );
+
+    if (response.statusCode == 200) {
+      print("✅ Notification sent successfully");
+    } else {
+      print("❌ Notification failed: ${response.statusCode}");
+      print(response.body);
     }
   }
 }

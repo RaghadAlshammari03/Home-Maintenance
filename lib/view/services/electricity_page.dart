@@ -44,10 +44,7 @@ class _ElectricityPageState extends State<ElectricityPage> {
             itemCount: electricityServicesList.length,
             itemBuilder: (context, index) {
               final service = electricityServicesList[index];
-              return ServiceCard(
-                title: service.serviceName,
-                description: service.serviceDetail,
-              );
+              return ServiceCard(service: service);
             },
           ),
         ),

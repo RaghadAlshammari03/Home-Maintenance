@@ -39,6 +39,8 @@ dependencies:
   modal_bottom_sheet: ^3.0.0
   firebase_messaging: ^15.2.10
   http: ^1.4.0
+  firebase_database: ^11.3.10
+  googleapis_auth: ^2.0.0
 
 dev_dependencies:
   flutter_test:

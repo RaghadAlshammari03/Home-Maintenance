@@ -7,6 +7,7 @@ class TechnicianModel {
   String? activeDeliveryRequestID;
   String? technicianStatus;
   String? cloudMessagingToken;
+  String? major; 
 
   TechnicianModel({
     this.name,
@@ -15,6 +16,7 @@ class TechnicianModel {
     this.activeDeliveryRequestID,
     this.technicianStatus,
     this.cloudMessagingToken,
+    this.major,
   });
 
   Map<String, dynamic> toMap() {
@@ -25,6 +27,7 @@ class TechnicianModel {
       'activeDeliveryRequestID': activeDeliveryRequestID,
       'technicianStatus': technicianStatus,
       'cloudMessagingToken': cloudMessagingToken,
+      'major': major,
     };
   }
 
@@ -41,6 +44,9 @@ class TechnicianModel {
           map['technicianStatus'] != null ? map['technicianStatus'] as String : null,
       cloudMessagingToken: map['cloudMessagingToken'] != null
           ? map['cloudMessagingToken'] as String
+          : null,
+      major: map['major'] != null
+          ? map['major'] as String
           : null,
     );
   }

@@ -1,61 +1,106 @@
-import 'package:baligny/model/services_model.dart';
+import 'package:baligny/model/servicesModel/servicesModel.dart';
 
-//Air condition services list
-const List<AirConditionServices> airConditionServicesList = [
-  AirConditionServices(
-    'فحص وصيانة الأنظمة الكهربائية المنزلية والتجارية', 
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation'
-    ),
-  AirConditionServices(
-    'إصلاح وتركيب أجهزة الإضاءة والمفاتيح والمقابس',
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+List<ServiceModel> airConditionServicesList = [
+  ServiceModel(
+    id: 'ac_1',
+    name: 'فحص وصيانة الأنظمة الكهربائية المنزلية والتجارية',
+    detail:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+    major: 'تكييف',
+    type: 'airCondition',
   ),
-  AirConditionServices(
-    'تشخيص وحل مشاكل الدوائر الكهربائية والقواطع',
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+  ServiceModel(
+    id: 'ac_2',
+    name: 'إصلاح وتركيب أجهزة الإضاءة والمفاتيح والمقابس',
+    detail:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+    major: 'تكييف',
+    type: 'airCondition',
   ),
-  AirConditionServices(
-    'تركيب وصيانة أنظمة الطاقة الشمسية',
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+  ServiceModel(
+    id: 'ac_3',
+    name: 'تشخيص وحل مشاكل الدوائر الكهربائية والقواطع',
+    detail:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+    major: 'تكييف',
+    type: 'airCondition',
+  ),
+  ServiceModel(
+    id: 'ac_4',
+    name: 'تركيب وصيانة أنظمة الطاقة الشمسية',
+    detail:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+    major: 'تكييف',
+    type: 'airCondition',
   ),
 ];
 
-// /plumbing services list
-const List<PlumbingServices> plumbingServicesList = [
-  PlumbingServices(
-    'فحص وصيانة الأنظمة الكهربائية المنزلية والتجارية', 
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation'
-    ),
-  PlumbingServices(
-    'إصلاح وتركيب أجهزة الإضاءة والمفاتيح والمقابس',
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+List<ServiceModel> plumbingServicesList = [
+  ServiceModel(
+    id: 'pl_1',
+    name: 'فحص وصيانة الأنظمة الكهربائية المنزلية والتجارية',
+    detail:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+    major: 'سباكة',
+    type: 'plumbing',
   ),
-  PlumbingServices(
-    'تشخيص وحل مشاكل الدوائر الكهربائية والقواطع',
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+  ServiceModel(
+    id: 'pl_2',
+    name: 'إصلاح وتركيب أجهزة الإضاءة والمفاتيح والمقابس',
+    detail:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+    major: 'سباكة',
+    type: 'plumbing',
   ),
-  PlumbingServices(
-    'تركيب وصيانة أنظمة الطاقة الشمسية',
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+  ServiceModel(
+    id: 'pl_3',
+    name: 'تشخيص وحل مشاكل الدوائر الكهربائية والقواطع',
+    detail:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+    major: 'سباكة',
+    type: 'plumbing',
+  ),
+  ServiceModel(
+    id: 'pl_4',
+    name: 'تركيب وصيانة أنظمة الطاقة الشمسية',
+    detail:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+    major: 'سباكة',
+    type: 'plumbing',
   ),
 ];
 
-//electricity services list
-const List<ElectricityServices> electricityServicesList = [
-  ElectricityServices(
-    'فحص وصيانة الأنظمة الكهربائية المنزلية والتجارية', 
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation'
-    ),
-  ElectricityServices(
-    'إصلاح وتركيب أجهزة الإضاءة والمفاتيح والمقابس',
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+List<ServiceModel> electricityServicesList = [
+  ServiceModel(
+    id: 'el_1',
+    name: 'فحص وصيانة الأنظمة الكهربائية المنزلية والتجارية',
+    detail:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+    major: 'كهرباء',
+    type: 'electricity',
   ),
-  ElectricityServices(
-    'تشخيص وحل مشاكل الدوائر الكهربائية والقواطع',
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+  ServiceModel(
+    id: 'el_2',
+    name: 'إصلاح وتركيب أجهزة الإضاءة والمفاتيح والمقابس',
+    detail:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+    major: 'كهرباء',
+    type: 'electricity',
   ),
-  ElectricityServices(
-    'تركيب وصيانة أنظمة الطاقة الشمسية',
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+  ServiceModel(
+    id: 'el_3',
+    name: 'تشخيص وحل مشاكل الدوائر الكهربائية والقواطع',
+    detail:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+    major: 'كهرباء',
+    type: 'electricity',
+  ),
+  ServiceModel(
+    id: 'el_4',
+    name: 'تركيب وصيانة أنظمة الطاقة الشمسية',
+    detail:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod  por incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
+    major: 'كهرباء',
+    type: 'electricity',
   ),
 ];
