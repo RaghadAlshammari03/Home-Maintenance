@@ -4,9 +4,9 @@ import 'dart:developer';
 
 import 'package:baligny_technician/constants/constant.dart';
 import 'package:baligny_technician/model/technicianModel/technicianModel.dart';
-import 'package:baligny_technician/utils/colors.dart';
-import 'package:baligny_technician/view/signInLogicScreen/signInLogicScreen.dart';
+import 'package:baligny_technician/view/accountScreen/accountScreen.dart';
 import 'package:baligny_technician/widgets/toastService.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -24,28 +24,12 @@ class ProfileServices {
             toastStatus: 'SUCCESS',
             context: context,
           );
-          Navigator.pushAndRemoveUntil(
-            context,
-            PageTransition(
-              type: PageTransitionType.leftToRight,
-              child: const SignInLogicScreen(),
-            ),
-            (route) => false,
-          );
         })
         .onError((error, stackTrace) {
           ToastService.sendScaffoldAlert(
             msg: 'حصلت مشكلة، الرجاء المحاولة مرة أخرى',
             toastStatus: 'ERROR',
             context: context,
-          );
-          Navigator.pushAndRemoveUntil(
-            context,
-            PageTransition(
-              type: PageTransitionType.leftToRight,
-              child: const SignInLogicScreen(),
-            ),
-            (route) => false,
           );
         });
   }
@@ -65,4 +49,28 @@ class ProfileServices {
       throw Exception(e);
     }
   }
+
+  static Future<TechnicianModel?> getTechnicianData(String uid) async {
+    try {
+      final ref = FirebaseDatabase.instance
+          .ref()
+          .child('Technician')
+          .child(uid);
+      final snapshot = await ref.get();
+
+      if (snapshot.exists) {
+        Map<String, dynamic> data = Map<String, dynamic>.from(
+          snapshot.value as Map,
+        );
+        return TechnicianModel.fromMap(data); 
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching technician data from Realtime DB: $e');
+      return null;
+    }
+  }
+
+
 }

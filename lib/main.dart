@@ -41,7 +41,7 @@ class Baligny extends StatelessWidget {
             title: 'Baligny',
             theme: ThemeData(),
             //home: LoginScreen(),
-            //home: OTPScreen(),
+            //home: OTPScreen(), 
             //home: BottomNavigationBarBaligny(),
             home: const SignInLogicScreen(),
             //home: TechnicianRegistrationScreen(),

@@ -15,11 +15,16 @@ class PushNotificationServices {
 
   static Future<void> firebaseMessagingBackgroundHandler(
     RemoteMessage message,
-  ) async {}
+  ) async {
+    print(message);
+  }
 
   static Future<void> firebaseMessagingForegroundHandler(
     RemoteMessage message,
-  ) async {}
+  ) async {
+    print(message);
+    log("Foreground Notification Received: ${message.notification?.title}");
+  }
 
   static Future getToken() async {
     String? token = await firebaseMessaging.getToken();

@@ -98,7 +98,7 @@ class MobileAuthServices {
           ),
           (route) => false,
         );
-      } else {
+      } else { 
         Navigator.pushAndRemoveUntil(
           context,
           PageTransition(
