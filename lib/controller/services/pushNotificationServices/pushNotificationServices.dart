@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:baligny/constant/constant.dart';
 import 'package:baligny/controller/services/APIsKeys/firebaseToken.dart';
+import 'package:baligny/model/serviceOrderModel/serviceOrderModel.dart';
+import 'package:baligny/model/technicianModel/technicianModel.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart' as http;
 
@@ -52,45 +55,89 @@ class PushNotificationServices {
     subscribeToNotification();
   }
 
-  Future<void> sendNotificationToTechnician({
-    required String technicianToken,
-    required String serviceTitle,
-    required String serviceDescription,
+  static Future<void> sendNotificationToTechnicianByMajor({
+    required ServiceOrderModel serviceOrder,
   }) async {
-    final accessToken = await AccessTokenFirebase().getAccessToken();
+    final major = serviceOrder.servicedetail.major;
+    final serviceTitle = serviceOrder.servicedetail.name;
+    final serviceDescription = serviceOrder.servicedetail.detail;
 
-    final url = Uri.parse(
-      'https://fcm.googleapis.com/v1/projects/baligny-6cec8/messages:send',
-    );
+    try {
+      final techSnapshot = await FirebaseDatabase.instance
+          .ref('Technician')
+          .get();
 
-    final message = {
-      "message": {
-        "token": technicianToken,
-        "notification": {
-          "title": "طلب جديد: $serviceTitle",
-          "body": serviceDescription,
-        },
-        "data": {
-          "click_action": "FLUTTER_NOTIFICATION_CLICK",
-          "type": "technician_request",
-        },
-      },
-    };
+      if (!techSnapshot.exists) {
+        log('No technicians found in Firebase.');
+        return;
+      }
 
-    final response = await http.post(
-      url,
-      headers: {
-        'Authorization': 'Bearer $accessToken',
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(message),
-    );
+      final techMap = Map<String, dynamic>.from(
+        techSnapshot.value as Map<dynamic, dynamic>,
+      );
 
-    if (response.statusCode == 200) {
-      print("✅ Notification sent successfully");
-    } else {
-      print("❌ Notification failed: ${response.statusCode}");
-      print(response.body);
+      final allTechnicians = techMap.entries.map((entry) {
+        final map = Map<String, dynamic>.from(entry.value);
+        map['technicianID'] = entry.key;
+        return TechnicianModel.fromMap(map);
+      }).toList();
+
+      final filteredTechnicians = allTechnicians.where((tech) {
+        final techMajor = tech.major?.trim();
+        return techMajor != null && techMajor == major.trim();
+      }).toList();
+
+      log('Found ${filteredTechnicians.length} matching technicians');
+
+      if (filteredTechnicians.isEmpty) {
+        log('No matching technicians to notify.');
+        return;
+      }
+
+      final accessToken = await AccessTokenFirebase().getAccessToken();
+
+      for (var technician in filteredTechnicians) {
+        final token = technician.cloudMessagingToken;
+        if (token != null && token.isNotEmpty) {
+          final url = Uri.parse(
+            'https://fcm.googleapis.com/v1/projects/baligny-6cec8/messages:send',
+          );
+
+          final message = {
+            "message": {
+              "token": token,
+              "notification": {
+                "title": "طلب جديد: $serviceTitle",
+                "body": serviceDescription,
+              },
+              "data": {
+                "click_action": "FLUTTER_NOTIFICATION_CLICK",
+                "type": "technician_request",
+              },
+            },
+          };
+
+          final response = await http.post(
+            url,
+            headers: {
+              'Authorization': 'Bearer $accessToken',
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(message),
+          );
+
+          if (response.statusCode == 200) {
+            log("Notification sent to ${technician.name}");
+          } else {
+            log(
+              "Failed to send to ${technician.name}: ${response.statusCode}",
+            );
+            log(response.body);
+          }
+        }
+      }
+    } catch (e, stack) {
+      log("Error sending technician notifications: $e\n$stack");
     }
   }
 }

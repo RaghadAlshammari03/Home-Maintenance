@@ -5,7 +5,7 @@ import 'package:baligny/controller/services/userDataCRUDServices/userDataCRUDSer
 import 'package:baligny/model/userAddressModel/userAddressModel.dart';
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
-import 'package:baligny/view/user_account/addAddresssScreen.dart';
+import 'package:baligny/view/accountScreen/addAddresssScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:page_transition/page_transition.dart';

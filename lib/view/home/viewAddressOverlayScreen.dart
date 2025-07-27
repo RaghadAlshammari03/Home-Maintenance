@@ -4,7 +4,7 @@ import 'package:baligny/controller/provider/profileProvider/profileProvider.dart
 import 'package:baligny/controller/services/userDataCRUDServices/userDataCRUDServices.dart';
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
-import 'package:baligny/view/user_account/addAddresssScreen.dart';
+import 'package:baligny/view/accountScreen/addAddresssScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';

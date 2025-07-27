@@ -5,20 +5,20 @@ import 'package:baligny/model/technicianModel/technicianModel.dart';
 import 'package:baligny/model/userAddressModel/userAddressModel.dart';
 import 'package:baligny/model/userModel/userModel.dart';
 
-class Serviceordermodel {
+class ServiceOrderModel {
   ServiceModel servicedetail;
-  UserAddressModel userAddress;
-  UserModel userData;
+  UserAddressModel? userAddress;
+  UserModel? userData;
   TechnicianModel? technicianData;
-  String orderID;
-  String orderStatus;
-  DateTime orderPlacedAt;
+  String? orderID;
+  String? orderStatus;
+  DateTime? orderPlacedAt;
   DateTime? orderDeliveredAt;
-  int deliveryCharges;
-  String userUID;
-  DateTime? addedTocartAt;
+  int? deliveryCharges;
+  String? userUID;
+  DateTime? addedToCartAt;
 
-  Serviceordermodel({
+  ServiceOrderModel({
     required this.servicedetail,
     required this.userAddress,
     required this.userData,
@@ -29,26 +29,26 @@ class Serviceordermodel {
     this.orderDeliveredAt,
     required this.deliveryCharges,
     required this.userUID,
-    this.addedTocartAt,
+    this.addedToCartAt,
   });
 
   Map<String, dynamic> toMap() {
     return {
       'servicedetail': servicedetail.toMap(),
-      'userAddress': userAddress.toMap(),
-      'userData': userData.toMap(),
+      'userAddress': userAddress?.toMap(),
+      'userData': userData?.toMap(),
       'technicianData': technicianData?.toMap(),
       'orderID': orderID,
       'orderStatus': orderStatus,
-      'orderPlacedAt': orderPlacedAt.millisecondsSinceEpoch,
+      'orderPlacedAt': orderPlacedAt?.millisecondsSinceEpoch,
       'orderDeliveredAt': orderDeliveredAt?.millisecondsSinceEpoch,
       'deliveryCharges': deliveryCharges,
       'userUID': userUID,
-      'addedTocartAt': addedTocartAt?.millisecondsSinceEpoch,
+      'addedTocartAt': addedToCartAt?.millisecondsSinceEpoch,
     };
   }
 
-  factory Serviceordermodel.fromMap(Map<String, dynamic> map) {
+  factory ServiceOrderModel.fromMap(Map<String, dynamic> map) {
     if (map['userAddress'] == null ||
         map['userData'] == null ||
         map['orderID'] == null ||
@@ -58,7 +58,7 @@ class Serviceordermodel {
       throw Exception('Missing required fields in Serviceordermodel');
     }
 
-    return Serviceordermodel(
+    return ServiceOrderModel(
       servicedetail: ServiceModel.fromMap(map['servicedetail']),
       userAddress: UserAddressModel.fromMap(map['userAddress']),
       userData: UserModel.fromMap(map['userData']),
@@ -73,7 +73,7 @@ class Serviceordermodel {
           : null,
       deliveryCharges: map['deliveryCharges'] as int,
       userUID: map['userUID'] as String,
-      addedTocartAt: map['addedTocartAt'] != null
+      addedToCartAt: map['addedTocartAt'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['addedTocartAt'])
           : null,
     );
@@ -81,6 +81,6 @@ class Serviceordermodel {
 
   String toJson() => json.encode(toMap());
 
-  factory Serviceordermodel.fromJson(String source) =>
-      Serviceordermodel.fromMap(json.decode(source));
+  factory ServiceOrderModel.fromJson(String source) =>
+      ServiceOrderModel.fromMap(json.decode(source));
 }

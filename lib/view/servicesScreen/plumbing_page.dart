@@ -1,25 +1,17 @@
-// ignore_for_file: use_build_context_synchronously
-
-import 'dart:developer';
-
-import 'package:baligny/constant/constant.dart';
-import 'package:baligny/controller/services/pushNotificationServices/pushNotificationServices.dart';
-import 'package:baligny/model/technicianModel/technicianModel.dart';
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
-import 'package:baligny/view/services/services_data/data.dart';
-import 'package:baligny/view/services/widgets/service_card.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'package:baligny/view/servicesScreen/services_data/data.dart';
+import 'package:baligny/view/servicesScreen/widgets/service_card.dart';
 import 'package:flutter/material.dart';
 
-class AirConditionPage extends StatefulWidget {
-  const AirConditionPage({super.key});
+class PlumbingPage extends StatefulWidget {
+  const PlumbingPage({super.key});
 
   @override
-  State<AirConditionPage> createState() => _AirConditionPageState();
+  State<PlumbingPage> createState() => _PlumbingPageState();
 }
 
-class _AirConditionPageState extends State<AirConditionPage> {
+class _PlumbingPageState extends State<PlumbingPage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -27,11 +19,8 @@ class _AirConditionPageState extends State<AirConditionPage> {
         backgroundColor: Color(0xFFF5F5F5),
         appBar: AppBar(
           title: Text(
-            'خدمات التكييف',
-            style: AppTextStyles.heading20Bold.copyWith(
-              color: white,
-              fontWeight: FontWeight.bold,
-            ),
+            'خدمات السباكة',
+            style: AppTextStyles.heading20Bold.copyWith(color: white, fontWeight: FontWeight.bold),
           ),
           titleSpacing: 00.0,
           centerTitle: true,
@@ -47,13 +36,14 @@ class _AirConditionPageState extends State<AirConditionPage> {
           backgroundColor: lightOrange,
           foregroundColor: Colors.white,
         ),
+        
         body: Directionality(
           textDirection: TextDirection.rtl,
           child: ListView.builder(
             physics: const BouncingScrollPhysics(),
-            itemCount: airConditionServicesList.length,
-             itemBuilder: (context, index) {
-              final service = airConditionServicesList[index];
+            itemCount: plumbingServicesList.length,
+            itemBuilder: (context, index) {
+              final service = plumbingServicesList[index];
               return ServiceCard(service: service);
             },
           ),

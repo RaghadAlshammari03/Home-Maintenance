@@ -9,7 +9,7 @@ import 'package:baligny/view/authScreens/login_screen.dart';
 import 'package:baligny/view/authScreens/otpScreen.dart';
 import 'package:baligny/view/bottomNavigation/bottomNavigationBar.dart';
 import 'package:baligny/view/signInLogicScreen/signInLogicScreen.dart';
-import 'package:baligny/view/user_account/addAddresssScreen.dart';
+import 'package:baligny/view/accountScreen/addAddresssScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';

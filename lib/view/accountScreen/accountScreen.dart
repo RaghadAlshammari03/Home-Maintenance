@@ -1,9 +1,9 @@
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
-import 'package:baligny/view/user_account/logOutScreen.dart';
+import 'package:baligny/view/accountScreen/logOutScreen.dart';
 import 'package:baligny/view/user_account/ContactUsScreen.dart';
-import 'package:baligny/view/user_account/addressScreen.dart';
-import 'package:baligny/view/user_account/paymentMethodsScreen.dart';
+import 'package:baligny/view/accountScreen/addressScreen.dart';
+import 'package:baligny/view/accountScreen/paymentMethodsScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

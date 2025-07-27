@@ -1,4 +1,5 @@
 import 'package:baligny/controller/provider/authProvider/mobileAuthProvider.dart';
+import 'package:baligny/controller/provider/itemOrderProvider/itemOrderProvider.dart';
 import 'package:baligny/controller/provider/profileProvider/profileProvider.dart';
 import 'package:baligny/firebase_options.dart';
 import 'package:baligny/view/signInLogicScreen/signInLogicScreen.dart';
@@ -27,8 +28,11 @@ class Baligny extends StatelessWidget {
             ChangeNotifierProvider<MobileAuthProvider>(
               create: (_) => MobileAuthProvider(),
             ),
-            ChangeNotifierProvider(
+            ChangeNotifierProvider<ProfileProvider>(
               create: (_) => ProfileProvider()
+            ),
+            ChangeNotifierProvider<ItemOrderProvider>(
+              create: (_) => ItemOrderProvider()
             ),
           ],
           child: MaterialApp(

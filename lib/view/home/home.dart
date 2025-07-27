@@ -6,8 +6,8 @@ import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
 import 'package:baligny/view/cart/cart_page.dart';
 import 'package:baligny/view/services/Electricity_page.dart';
-import 'package:baligny/view/services/air_condition_page.dart';
-import 'package:baligny/view/services/plumbing_page.dart';
+import 'package:baligny/view/servicesScreen/air_condition_page.dart';
+import 'package:baligny/view/servicesScreen/plumbing_page.dart';
 import 'package:baligny/view/home/viewAddressOverlayScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -31,6 +31,14 @@ class _HomeScreenState extends State<HomeScreen> {
     'assets/images/imageSliders/sliderImage1.jpeg',
     'assets/images/imageSliders/sliderImage2.jpeg',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ProfileProvider>().fetchUserAddress();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,11 +100,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       Consumer<ProfileProvider>(
                         builder: (context, provider, child) {
                           UserAddressModel? activeAddress;
-                            try {
-                              activeAddress = provider.addresses.firstWhere((address) => address.isActive);
-                            } catch (e) {
-                              activeAddress = null;
-                            }
+                          try {
+                            activeAddress = provider.addresses.firstWhere(
+                              (address) => address.isActive,
+                            );
+                          } catch (e) {
+                            activeAddress = null;
+                          }
                           return TextButton.icon(
                             onPressed: () {
                               showModalBottomSheet(
@@ -117,7 +127,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   activeAddress != null
                                       ? '${activeAddress.addressTitle} - ${activeAddress.roomNo} - ${activeAddress.apartment}'
                                       : 'لا يوجد عنوان افتراضي',
-                                  style: AppTextStyles.body16.copyWith(color: white),
+                                  style: AppTextStyles.body16.copyWith(
+                                    color: white,
+                                  ),
                                 ),
                                 SizedBox(width: 1.w),
                                 FaIcon(

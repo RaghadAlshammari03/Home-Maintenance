@@ -1,17 +1,19 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
-import 'package:baligny/view/services/services_data/data.dart';
-import 'package:baligny/view/services/widgets/service_card.dart';
+import 'package:baligny/view/servicesScreen/services_data/data.dart';
+import 'package:baligny/view/servicesScreen/widgets/service_card.dart';
 import 'package:flutter/material.dart';
 
-class ElectricityPage extends StatefulWidget {
-  const ElectricityPage({super.key});
+class AirConditionPage extends StatefulWidget {
+  const AirConditionPage({super.key});
 
   @override
-  State<ElectricityPage> createState() => _ElectricityPageState();
+  State<AirConditionPage> createState() => _AirConditionPageState();
 }
 
-class _ElectricityPageState extends State<ElectricityPage> {
+class _AirConditionPageState extends State<AirConditionPage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -19,8 +21,11 @@ class _ElectricityPageState extends State<ElectricityPage> {
         backgroundColor: Color(0xFFF5F5F5),
         appBar: AppBar(
           title: Text(
-            'خدمات الكهرباء',
-            style: AppTextStyles.heading20Bold.copyWith(color: white, fontWeight: FontWeight.bold),
+            'خدمات التكييف',
+            style: AppTextStyles.heading20Bold.copyWith(
+              color: white,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           titleSpacing: 00.0,
           centerTitle: true,
@@ -36,14 +41,13 @@ class _ElectricityPageState extends State<ElectricityPage> {
           backgroundColor: lightOrange,
           foregroundColor: Colors.white,
         ),
-        
         body: Directionality(
           textDirection: TextDirection.rtl,
           child: ListView.builder(
             physics: const BouncingScrollPhysics(),
-            itemCount: electricityServicesList.length,
-            itemBuilder: (context, index) {
-              final service = electricityServicesList[index];
+            itemCount: airConditionServicesList.length,
+             itemBuilder: (context, index) {
+              final service = airConditionServicesList[index];
               return ServiceCard(service: service);
             },
           ),
