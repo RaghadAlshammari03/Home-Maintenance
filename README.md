@@ -1,4 +1,4 @@
-# Service Home Maintenance User's App
+# Home Maintenance User's App
 
 a mobile application that allows users to request home maintenance services, track service status, and manage their orders with ease.
 
