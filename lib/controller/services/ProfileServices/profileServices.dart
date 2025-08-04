@@ -1,14 +1,12 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, avoid_print
 
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:baligny_technician/constants/constant.dart';
 import 'package:baligny_technician/model/technicianModel/technicianModel.dart';
-import 'package:baligny_technician/view/accountScreen/accountScreen.dart';
 import 'package:baligny_technician/widgets/toastService.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 
 class ProfileServices {
   static registerTechnician(
@@ -50,19 +48,18 @@ class ProfileServices {
     }
   }
 
-  static Future<TechnicianModel?> getTechnicianData(String uid) async {
+  static Future<TechnicianModel?> getTechnicianProfileData() async {
     try {
-      final ref = FirebaseDatabase.instance
-          .ref()
-          .child('Technician')
-          .child(uid);
+      final ref = realTimeDatabaseRef.child('Technician/${auth.currentUser!.uid}');
       final snapshot = await ref.get();
+      log(snapshot.value.toString());
 
       if (snapshot.exists) {
-        Map<String, dynamic> data = Map<String, dynamic>.from(
-          snapshot.value as Map,
+        TechnicianModel technicianData = TechnicianModel.fromMap(
+          jsonDecode(jsonEncode(snapshot.value)) as Map<String, dynamic>,
         );
-        return TechnicianModel.fromMap(data); 
+        log(technicianData.toMap().toString());
+        return technicianData;
       } else {
         return null;
       }
@@ -71,6 +68,4 @@ class ProfileServices {
       return null;
     }
   }
-
-
 }

@@ -25,8 +25,7 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Future<void> loadTechnicianData() async {
-    final uid = FirebaseAuth.instance.currentUser!.uid;
-    TechnicianModel? data = await ProfileServices.getTechnicianData(uid);
+    TechnicianModel? data = await ProfileServices.getTechnicianProfileData();
     setState(() {
       technician = data;
       isLooding = false;

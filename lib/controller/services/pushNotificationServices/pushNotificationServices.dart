@@ -1,16 +1,28 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
 import 'dart:developer';
 
 import 'package:baligny_technician/constants/constant.dart';
+import 'package:baligny_technician/controller/services/pushNotificationServices/pushNotificationDialogue.dart';
+import 'package:baligny_technician/model/serviceOrderModel/serviceOrderModel.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 
 class PushNotificationServices {
   static FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
-  static Future initializeFirebaseMessaging() async {
+  static Future initializeFirebaseMessaging(BuildContext context) async {
     await firebaseMessaging.requestPermission();
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-    FirebaseMessaging.onMessage.listen(firebaseMessagingForegroundHandler);
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        log(message.toMap().toString());
+        /* log('The message data is:');
+        log(message.data.toString()); */
+        firebaseMessagingForegroundHandler(message, context);
+      }
+    });
   }
 
   static Future<void> firebaseMessagingBackgroundHandler(
@@ -21,9 +33,13 @@ class PushNotificationServices {
 
   static Future<void> firebaseMessagingForegroundHandler(
     RemoteMessage message,
+    BuildContext context,
   ) async {
-    print(message);
+    log('The message data is:');
     log("Foreground Notification Received: ${message.notification?.title}");
+    log(message.data.toString());
+    log(message.data['serviceOrderID']);
+    PushNotificationDialogue.serviceRequestDialogue(message.data['serviceOrderID'], context);
   }
 
   static Future getToken() async {
@@ -40,8 +56,8 @@ class PushNotificationServices {
   }
 
   //Firebase cloud messaging
-  static initializeFCM() {
-    initializeFirebaseMessaging();
+  static initializeFCM(BuildContext context) {
+    initializeFirebaseMessaging(context);
     getToken();
     subscribeToNotification();
   }
