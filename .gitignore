@@ -5,43 +5,58 @@
 *.swp
 .DS_Store
 .atom/
-.build/
-.buildlog/
 .history
 .svn/
 .swiftpm/
 migrate_working_dir/
 
-# IntelliJ related
-*.iml
-*.ipr
-*.iws
+# IDEs
 .idea/
+.vscode/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
-
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
+# Flutter & Dart
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
+.packages
 .pub-cache/
 .pub/
-/build/
+.fvm/
+.melos_tool/
 
-# Symbolication related
+# Build outputs
+build/
+.android/
+.ios/
+android/app/build/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/App.framework
+ios/Flutter/engine/
+web/.dart_tool/
+
+# Symbolication and Obfuscation
 app.*.symbols
-
-# Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+# Firebase 
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+firestore.*
+database.*
 
+# Environment files
+.env
 lib/controller/services/APIsKeys/
+
+# pubspec.lock
+
+# Firebase Crashlytics / Performance
+.crashlytics/
+.performance/
+
+# Android signing keys 
+android/key.properties
+*.jks
+
+*.iml
