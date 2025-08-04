@@ -1,9 +1,10 @@
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
+import 'package:baligny/view/accountScreen/contactUsScreen.dart';
 import 'package:baligny/view/accountScreen/logOutScreen.dart';
-import 'package:baligny/view/user_account/ContactUsScreen.dart';
 import 'package:baligny/view/accountScreen/addressScreen.dart';
 import 'package:baligny/view/accountScreen/paymentMethodsScreen.dart';
+import 'package:baligny/view/historyOrderScreen/historyOrderScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -18,6 +19,7 @@ class AccountScreen extends StatefulWidget {
 
 class _AccountScreenState extends State<AccountScreen> {
   List account = [
+    [FontAwesomeIcons.basketShopping, 'الطلبات السابقة'],
     [FontAwesomeIcons.locationDot, 'سجل العناوين'],
     [FontAwesomeIcons.creditCard, 'طرق الدفع'],
     [FontAwesomeIcons.circleInfo, 'تواصل معنا'],
@@ -106,7 +108,7 @@ class _AccountScreenState extends State<AccountScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const AddressScreen(),
+                                builder: (context) => const HistoryScreenScreen(),
                               ),
                             );
                             break;
@@ -114,7 +116,7 @@ class _AccountScreenState extends State<AccountScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const PaymentMethods(),
+                                builder: (context) => const AddressScreen(),
                               ),
                             );
                             break;
@@ -122,11 +124,19 @@ class _AccountScreenState extends State<AccountScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const ContactUs(),
+                                builder: (context) => const PaymentMethods(),
                               ),
                             );
                             break;
                           case 3:
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ContactUs(),
+                              ),
+                            );
+                            break;
+                          case 4:
                             showDialog(
                               context: context,
                               builder: (context) => AlertDialog(

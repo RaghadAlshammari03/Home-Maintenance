@@ -4,9 +4,9 @@ import 'package:baligny/controller/provider/profileProvider/profileProvider.dart
 import 'package:baligny/model/userAddressModel/userAddressModel.dart';
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
-import 'package:baligny/view/cart/cart_page.dart';
-import 'package:baligny/view/services/Electricity_page.dart';
+import 'package:baligny/view/bottomNavigation/bottomNavigationBar.dart';
 import 'package:baligny/view/servicesScreen/air_condition_page.dart';
+import 'package:baligny/view/servicesScreen/electricity_page.dart';
 import 'package:baligny/view/servicesScreen/plumbing_page.dart';
 import 'package:baligny/view/home/viewAddressOverlayScreen.dart';
 import 'package:flutter/material.dart';
@@ -88,12 +88,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     children: [
                       CircleAvatar(
-                        backgroundColor: greyShade3,
+                        backgroundColor: white,
                         radius: 1.5.h,
                         child: FaIcon(
                           FontAwesomeIcons.locationDot,
-                          size: 1.5.h,
-                          color: grey,
+                          size: 1.8.h,
+                          color: lightOrange,
                         ),
                       ),
 
@@ -147,24 +147,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-
-            actions: [
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => CartPage()),
-                    );
-                  },
-                  child: FaIcon(
-                    FontAwesomeIcons.cartShopping,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
           ),
           body: ListView(
             physics: BouncingScrollPhysics(),

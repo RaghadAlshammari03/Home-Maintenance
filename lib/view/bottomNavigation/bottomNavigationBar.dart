@@ -1,3 +1,4 @@
+import 'package:baligny/controller/provider/profileProvider/profileProvider.dart';
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
 import 'package:baligny/view/home/home.dart';
@@ -7,6 +8,7 @@ import 'package:baligny/view/ordersScreen/ordersScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import 'package:provider/provider.dart';
 
 class BottomNavigationBarBaligny extends StatefulWidget {
   const BottomNavigationBarBaligny({super.key});
@@ -47,7 +49,7 @@ class _BottomNavigationBarBalignyState
       ),
       PersistentBottomNavBarItem(
         icon: FaIcon(FontAwesomeIcons.basketShopping),
-        title: ("طلباتي"),
+        title: ("السلة"),
         textStyle: AppTextStyles.body16,
         activeColorPrimary: lightOrange,
         inactiveColorPrimary: grey,
@@ -60,6 +62,13 @@ class _BottomNavigationBarBalignyState
         inactiveColorPrimary: grey,
       ),
     ];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<ProfileProvider>().fetchUserAddress();
+    context.read<ProfileProvider>().fetchUserData();
   }
 
   @override

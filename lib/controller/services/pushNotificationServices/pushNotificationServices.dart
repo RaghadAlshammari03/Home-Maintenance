@@ -56,11 +56,11 @@ class PushNotificationServices {
   }
 
   static Future<void> sendNotificationToTechnicianByMajor({
-    required ServiceOrderModel serviceOrder,
+    required ServiceOrderModel serviceOrderData,
   }) async {
-    final major = serviceOrder.servicedetail.major;
-    final serviceTitle = serviceOrder.servicedetail.name;
-    final serviceDescription = serviceOrder.servicedetail.detail;
+    final major = serviceOrderData.servicedetail.major;
+    final serviceTitle = serviceOrderData.servicedetail.name;
+    final serviceDescription = serviceOrderData.servicedetail.detail;
 
     try {
       final techSnapshot = await FirebaseDatabase.instance
@@ -110,10 +110,7 @@ class PushNotificationServices {
                 "title": "طلب جديد: $serviceTitle",
                 "body": serviceDescription,
               },
-              "data": {
-                "click_action": "FLUTTER_NOTIFICATION_CLICK",
-                "type": "technician_request",
-              },
+              "data": {"serviceOrderID": serviceOrderData.orderID}
             },
           };
 
@@ -129,9 +126,7 @@ class PushNotificationServices {
           if (response.statusCode == 200) {
             log("Notification sent to ${technician.name}");
           } else {
-            log(
-              "Failed to send to ${technician.name}: ${response.statusCode}",
-            );
+            log("Failed to send to ${technician.name}: ${response.statusCode}");
             log(response.body);
           }
         }

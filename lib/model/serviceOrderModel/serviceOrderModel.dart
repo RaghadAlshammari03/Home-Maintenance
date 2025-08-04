@@ -10,25 +10,27 @@ class ServiceOrderModel {
   UserAddressModel? userAddress;
   UserModel? userData;
   TechnicianModel? technicianData;
+  String? technicianUID;
   String? orderID;
   String? orderStatus;
+  String? userUID;
   DateTime? orderPlacedAt;
   DateTime? orderDeliveredAt;
-  int? deliveryCharges;
-  String? userUID;
+  int? serviceCharges;
   DateTime? addedToCartAt;
 
   ServiceOrderModel({
     required this.servicedetail,
-    required this.userAddress,
-    required this.userData,
+    this.userAddress,
+    this.userData,
     this.technicianData,
-    required this.orderID,
-    required this.orderStatus,
-    required this.orderPlacedAt,
+    this.technicianUID,
+    this.orderID,
+    this.orderStatus,
+    this.userUID,
+    this.orderPlacedAt,
     this.orderDeliveredAt,
-    required this.deliveryCharges,
-    required this.userUID,
+    this.serviceCharges,
     this.addedToCartAt,
   });
 
@@ -38,13 +40,14 @@ class ServiceOrderModel {
       'userAddress': userAddress?.toMap(),
       'userData': userData?.toMap(),
       'technicianData': technicianData?.toMap(),
+      'technicianUID': technicianUID,
       'orderID': orderID,
       'orderStatus': orderStatus,
-      'orderPlacedAt': orderPlacedAt?.millisecondsSinceEpoch,
-      'orderDeliveredAt': orderDeliveredAt?.millisecondsSinceEpoch,
-      'deliveryCharges': deliveryCharges,
+      'orderPlacedAt': orderPlacedAt?.toIso8601String(),
+      'orderDeliveredAt': orderDeliveredAt?.toIso8601String(),
+      'serviceCharges': serviceCharges,
+      'addedToCartAt': addedToCartAt?.toIso8601String(),
       'userUID': userUID,
-      'addedTocartAt': addedToCartAt?.millisecondsSinceEpoch,
     };
   }
 
@@ -53,8 +56,8 @@ class ServiceOrderModel {
         map['userData'] == null ||
         map['orderID'] == null ||
         map['orderStatus'] == null ||
-        map['orderPlacedAt'] == null ||
-        map['userUID'] == null) {
+        map['userUID'] == null ||
+        map['orderPlacedAt'] == null) {
       throw Exception('Missing required fields in Serviceordermodel');
     }
 
@@ -65,16 +68,18 @@ class ServiceOrderModel {
       technicianData: map['technicianData'] != null
           ? TechnicianModel.fromMap(map['technicianData'])
           : null,
+      technicianUID: map['technicianUID'] as String?,
       orderID: map['orderID'] as String,
       orderStatus: map['orderStatus'] as String,
-      orderPlacedAt: DateTime.fromMillisecondsSinceEpoch(map['orderPlacedAt']),
-      orderDeliveredAt: map['orderDeliveredAt'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['orderDeliveredAt'])
-          : null,
-      deliveryCharges: map['deliveryCharges'] as int,
       userUID: map['userUID'] as String,
-      addedToCartAt: map['addedTocartAt'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['addedTocartAt'])
+      orderPlacedAt: DateTime.parse(map['orderPlacedAt']),
+      orderDeliveredAt: map['orderDeliveredAt'] != null
+          ? DateTime.parse(map['orderDeliveredAt'])
+          : null,
+      serviceCharges: map['serviceCharges'] as int?,
+
+      addedToCartAt: map['addedToCartAt'] != null
+          ? DateTime.parse(map['addedToCartAt'])
           : null,
     );
   }

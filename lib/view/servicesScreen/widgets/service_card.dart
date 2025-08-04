@@ -1,9 +1,14 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:baligny/constant/constant.dart';
+import 'package:baligny/controller/provider/itemOrderProvider/itemOrderProvider.dart';
 import 'package:baligny/controller/services/serviceOrderServices/serviceOrderServices.dart';
 import 'package:baligny/model/servicesModel/servicesModel.dart';
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
 import 'package:baligny/widgets/toastService.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
 class ServiceCard extends StatefulWidget {
@@ -24,7 +29,7 @@ class _ServiceCardState extends State<ServiceCard> {
 
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.sp)),
       shadowColor: greyShade3,
       color: white,
       elevation: 2,
@@ -105,7 +110,7 @@ class _ServiceCardState extends State<ServiceCard> {
                 ElevatedButton(
                   onPressed: () async {
                     int qtyToAdd = quantity > 0 ? quantity : 1;
-
+                    String serviceID = uuid.v1();
                     ServiceModel serviceData = ServiceModel(
                       id: service.id,
                       name: service.name,
@@ -113,12 +118,14 @@ class _ServiceCardState extends State<ServiceCard> {
                       major: service.major,
                       type: service.type,
                       quantity: qtyToAdd,
+                      orderID: serviceID,
                       addedToCartAt: DateTime.now(),
                     );
                     await ServiceOrderServices.addServiceToCart(
                       serviceData,
                       context,
                     );
+                    context.read<ItemOrderProvider>().fetchCartItems();
 
                     // Reset quantity
                     setState(() => quantity = 0);

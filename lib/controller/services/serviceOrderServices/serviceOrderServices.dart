@@ -1,15 +1,19 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:developer';
 
 import 'package:baligny/constant/constant.dart';
+import 'package:baligny/controller/provider/itemOrderProvider/itemOrderProvider.dart';
 import 'package:baligny/controller/services/pushNotificationServices/pushNotificationServices.dart';
 import 'package:baligny/model/serviceOrderModel/serviceOrderModel.dart';
 import 'package:baligny/model/servicesModel/servicesModel.dart';
 import 'package:baligny/widgets/toastService.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ServiceOrderServices {
-  orderStatus(int status) {
+  static orderStatus(int status) {
     switch (status) {
       case 0:
         return 'SERVICE_UNDER_PREPERATION';
@@ -18,7 +22,7 @@ class ServiceOrderServices {
       case 2:
         return 'TECHNICIAN_ON_THE_WAY';
       case 3:
-        return 'SERVICE_DERLIVERED';
+        return 'SERVICE_DELIVERED';
     }
   }
 
@@ -28,28 +32,32 @@ class ServiceOrderServices {
     String cartOrderID,
     BuildContext context,
   ) async {
-    realTimeDatabaseRef
-        .child('Orders/${serviceOrderModel.orderID}')
-        .set(serviceOrderModel.toMap())
-        .then((value) async {
-          log(serviceOrderModel.toMap().toString());
-          PushNotificationServices.sendNotificationToTechnicianByMajor(
-            serviceOrder: serviceOrderModel,
-          );
-          Navigator.pop(context);
-          ToastService.sendScaffoldAlert(
-            msg: 'تم إرسال الطلب بنجاح',
-            toastStatus: 'SUCCESS',
-            context: context,
-          );
-        })
-        .onError((error, stackTrace) {
-          ToastService.sendScaffoldAlert(
-            msg: 'حدثت مشكلة أثناء إرسال الطلب',
-            toastStatus: 'ERROR',
-            context: context,
-          );
-        });
+    try {
+      await realTimeDatabaseRef
+          .child('Orders/${serviceOrderModel.orderID}')
+          .set(serviceOrderModel.toMap());
+
+      log(serviceOrderModel.toMap().toString());
+
+      PushNotificationServices.sendNotificationToTechnicianByMajor(
+        serviceOrderData: serviceOrderModel,
+      );
+
+      ToastService.sendScaffoldAlert(
+        msg: 'تم إرسال الطلب بنجاح',
+        toastStatus: 'SUCCESS',
+        context: context,
+      );
+    } catch (e, stack) {
+      log('Error in serviceOrderRequest: $e');
+      log(stack.toString());
+
+      ToastService.sendScaffoldAlert(
+        msg: 'حدثت مشكلة أثناء إرسال الطلب',
+        toastStatus: 'ERROR',
+        context: context,
+      );
+    }
   }
 
   // Add the service to cart
@@ -58,12 +66,11 @@ class ServiceOrderServices {
     BuildContext context,
   ) async {
     try {
-      String serviceID = uuid.v1();
       await firestore
           .collection('Cart')
           .doc(auth.currentUser!.uid)
           .collection('CartItem')
-          .doc(serviceID)
+          .doc(serviceData.orderID)
           .set(serviceData.toMap())
           .whenComplete(() {
             ToastService.sendScaffoldAlert(
@@ -98,5 +105,59 @@ class ServiceOrderServices {
     return itemAddedToCart;
   }
 
+  // Update the service quantity on the cart
+  static updateQuantity(
+    String cartItemID,
+    int currentQuantity,
+    BuildContext context,
+    bool isAdded,
+  ) async {
+    try {
+      if (currentQuantity == 1 && !isAdded) {
+        await firestore
+            .collection('Cart')
+            .doc(auth.currentUser!.uid)
+            .collection('CartItem')
+            .doc(cartItemID)
+            .delete()
+            .then((value) {
+              context.read<ItemOrderProvider>().fetchCartItems();
+            });
+        return;
+      }
+      await firestore
+          .collection('Cart')
+          .doc(auth.currentUser!.uid)
+          .collection('CartItem')
+          .doc(cartItemID)
+          .update({
+            'quantity': isAdded ? currentQuantity + 1 : currentQuantity - 1,
+          })
+          .then((value) {
+            context.read<ItemOrderProvider>().fetchCartItems();
+          });
+    } catch (e) {
+      log(e.toString());
+      throw Exception(e);
+    }
+  }
 
+  static clearCartItems() async {
+    try {
+      final snapshot = await firestore
+          .collection('Cart')
+          .doc(auth.currentUser!.uid)
+          .collection('CartItem')
+          .get();
+
+      for (final doc in snapshot.docs) {
+        await doc.reference.delete();
+      }
+
+      log('Cart Cleared all items');
+    } catch (e) {
+      log('Error clearing cart: $e');
+      rethrow;
+    }
+  }
 }
