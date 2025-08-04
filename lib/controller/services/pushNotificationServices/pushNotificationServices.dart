@@ -4,7 +4,6 @@ import 'dart:developer';
 
 import 'package:baligny_technician/constants/constant.dart';
 import 'package:baligny_technician/controller/services/pushNotificationServices/pushNotificationDialogue.dart';
-import 'package:baligny_technician/model/serviceOrderModel/serviceOrderModel.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';

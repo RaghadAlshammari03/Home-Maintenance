@@ -1,9 +1,7 @@
 import 'dart:developer';
 
-import 'package:baligny_technician/controller/provider/orderProvider/orderProvider.dart';
 import 'package:baligny_technician/controller/services/locationServices/directionServices/directionServices.dart';
 import 'package:baligny_technician/controller/services/locationServices/locationServices.dart';
-import 'package:baligny_technician/controller/services/orderServices/orderServices.dart';
 import 'package:baligny_technician/model/directionModel/directionModel.dart';
 import 'package:baligny_technician/model/serviceOrderModel/serviceOrderModel.dart';
 import 'package:baligny_technician/utils/colors.dart';
@@ -12,7 +10,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:provider/provider.dart';
 
 class TechnicianProvider extends ChangeNotifier {
   Position? currentPosition;
@@ -197,8 +194,8 @@ class TechnicianProvider extends ChangeNotifier {
     );
 
     LatLng CustomerLocation = LatLng(
-      itemOrderData.userAddress!.latitude!,
-      itemOrderData.userAddress!.longitude!,
+      itemOrderData.userAddress!.latitude,
+      itemOrderData.userAddress!.longitude,
     );
 
     // Update locations
@@ -209,7 +206,7 @@ class TechnicianProvider extends ChangeNotifier {
 
     Marker currentLocationMarker = Marker(
       markerId: const MarkerId('currentLocation'),
-      position: LatLng(crrPosition!.latitude, crrPosition.longitude),
+      position: LatLng(crrPosition.latitude, crrPosition.longitude),
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange),
     );
 

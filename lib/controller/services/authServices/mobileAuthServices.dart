@@ -5,7 +5,6 @@ import 'dart:developer';
 import 'package:baligny_technician/constants/constant.dart';
 import 'package:baligny_technician/controller/provider/authProvider/mobileAuthProvider.dart';
 import 'package:baligny_technician/controller/services/ProfileServices/profileServices.dart';
-import 'package:baligny_technician/controller/services/pushNotificationServices/pushNotificationServices.dart';
 import 'package:baligny_technician/view/authScreens/login_screen.dart';
 import 'package:baligny_technician/view/authScreens/otpScreen.dart';
 import 'package:baligny_technician/view/bottomNavigation/bottomNavigationBar.dart';
