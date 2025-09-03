@@ -88,34 +88,41 @@ class MobileAuthServices {
   static checkUserRegistration({required BuildContext context}) async {
     bool userIsRegistered = false;
     try {
-      await firestore
-          .collection('User')
-          .where('userID', isEqualTo: auth.currentUser!.uid)
-          .get()
-          .then((value) {
-            value.size > 0 ? userIsRegistered = true : userIsRegistered = false;
-            log('User is Registered = $userIsRegistered');
-            if (userIsRegistered) {
-              PushNotificationServices.initializeFCM();
-              Navigator.pushAndRemoveUntil(
-                context,
-                PageTransition(
-                  child: const BottomNavigationBarBaligny(),
-                  type: PageTransitionType.rightToLeft,
-                ),
-                (route) => false,
-              );
-            } else {
-              Navigator.pushAndRemoveUntil(
-                context,
-                PageTransition(
-                  child: const AddAddresssScreen(),
-                  type: PageTransitionType.rightToLeft,
-                ),
-                (route) => false,
-              );
-            }
-          });
+      final uid = auth.currentUser?.uid;
+      if (uid == null) {
+        log('No signed-in user');
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+          (route) => false,
+        );
+        return;
+      }
+
+      final doc = await firestore.collection('User').doc(uid).get();
+      userIsRegistered = doc.exists;
+      log('User is Registered = $userIsRegistered');
+
+      if (userIsRegistered) {
+        PushNotificationServices.initializeFCM();
+        Navigator.pushAndRemoveUntil(
+          context,
+          PageTransition(
+            child: const BottomNavigationBarBaligny(),
+            type: PageTransitionType.rightToLeft,
+          ),
+          (route) => false,
+        );
+      } else {
+        Navigator.pushAndRemoveUntil(
+          context,
+          PageTransition(
+            child: const AddAddresssScreen(),
+            type: PageTransitionType.rightToLeft,
+          ),
+          (route) => false,
+        );
+      }
     } catch (e) {
       log(e.toString());
       throw Exception(e);

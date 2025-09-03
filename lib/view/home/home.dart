@@ -1,10 +1,10 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'package:baligny/controller/provider/profileProvider/profileProvider.dart';
+import 'package:baligny/controller/provider/review_provider.dart';
 import 'package:baligny/model/userAddressModel/userAddressModel.dart';
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
-import 'package:baligny/view/bottomNavigation/bottomNavigationBar.dart';
 import 'package:baligny/view/servicesScreen/air_condition_page.dart';
 import 'package:baligny/view/servicesScreen/electricity_page.dart';
 import 'package:baligny/view/servicesScreen/plumbing_page.dart';
@@ -16,6 +16,7 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import '../reviews/reviews_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -42,27 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> reviews = [
-      {
-        'name': 'رغد الشمري',
-        'rating': 4.0,
-        'text':
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
-      },
-      {
-        'name': 'رغد الشمري',
-        'rating': 3.0,
-        'text':
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
-      },
-      {
-        'name': 'رغد الشمري',
-        'rating': 5.0,
-        'text':
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua quis nostrud exercitation',
-      },
-    ];
-
     return SafeArea(
       child: Directionality(
         textDirection: TextDirection.rtl,
@@ -477,12 +457,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Container(width: 4, height: 32, color: darkBlue),
                       SizedBox(width: 2.w),
-                      Text(
-                        'اراء العملاء',
-                        style: AppTextStyles.body18Bold.copyWith(
-                          fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Text(
+                          'اراء العملاء',
+                          style: AppTextStyles.body18Bold.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
+                      // Reviews may only be added after order completion via TrackTechnicianScreen.
+                      SizedBox.shrink(),
                     ],
                   ),
                 ],
@@ -490,68 +474,128 @@ class _HomeScreenState extends State<HomeScreen> {
 
               SizedBox(height: 1.h),
 
-              // Slider
-              CarouselSlider(
-                options: CarouselOptions(
-                  height: 180,
-                  enableInfiniteScroll: false,
-                  enlargeCenterPage: true,
-                  viewportFraction: 0.8,
-                ),
-                items: reviews.map((review) {
-                  return Builder(
-                    builder: (BuildContext context) {
-                      return Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        elevation: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+              // Reviews horizontal scroller
+              Consumer<ReviewsProvider>(
+                builder: (context, provider, child) {
+                  final reviews = provider.reviews;
+                  if (reviews.isEmpty) {
+                    return SizedBox(
+                      height: 120,
+                      child: Center(child: Text('لا توجد آراء بعد')),
+                    );
+                  }
+
+                  final visible = reviews.take(4).toList();
+
+                  return SizedBox(
+                    height: 180,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      itemCount: visible.length + 1, // +1 for "view all"
+                      separatorBuilder: (_, __) => SizedBox(width: 12),
+                      itemBuilder: (context, index) {
+                        if (index == visible.length) {
+                          // View all tile
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const ReviewsPage(),
+                                ),
+                              );
+                            },
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.6,
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                elevation: 2,
+                                child: Center(
+                                  child: Text(
+                                    'مشاهدة الجميع',
+                                    style: AppTextStyles.body16Bold.copyWith(
+                                      color: darkBlue,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+
+                        final review = visible[index];
+                        final name = review['name'] ?? 'مستخدم';
+                        final rating = (review['rating'] is num)
+                            ? (review['rating'] as num).toDouble()
+                            : double.tryParse('${review['rating']}') ?? 0.0;
+                        final text = review['text'] ?? '';
+
+                        return SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            elevation: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  // Name and Icon
                                   Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Icon(Icons.account_circle, size: 30),
-                                      SizedBox(width: 8),
-                                      Text(
-                                        review['name'],
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
+                                      // Name and Icon
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.account_circle,
+                                            size: 30,
+                                            color: lightOrange,
+                                          ),
+                                          SizedBox(width: 8),
+                                          Text(
+                                            name,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
+                                      // Rating
+                                      RatingBarIndicator(
+                                        rating: rating,
+                                        itemBuilder: (context, _) => Icon(
+                                          Icons.star,
+                                          color: Colors.amber,
                                         ),
+                                        itemCount: 5,
+                                        itemSize: 20.0,
                                       ),
                                     ],
                                   ),
-
-                                  // Rating
-                                  RatingBarIndicator(
-                                    rating: review['rating'],
-                                    itemBuilder: (context, _) =>
-                                        Icon(Icons.star, color: Colors.amber),
-                                    itemCount: 5,
-                                    itemSize: 20.0,
+                                  SizedBox(height: 8),
+                                  Text(
+                                    text,
+                                    textAlign: TextAlign.right,
+                                    style: TextStyle(fontSize: 13),
+                                    maxLines: 4,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 8),
-                              Text(
-                                review['text'],
-                                textAlign: TextAlign.right,
-                                style: TextStyle(fontSize: 13),
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   );
-                }).toList(),
+                },
               ),
             ],
           ),

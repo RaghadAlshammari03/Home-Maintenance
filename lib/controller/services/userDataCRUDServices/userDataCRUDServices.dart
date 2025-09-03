@@ -16,10 +16,20 @@ import 'package:provider/provider.dart';
 class UserDataCRUDServices {
   static registerUser(UserModel data, BuildContext context) async {
     try {
+      // Ensure the mobileNumber is present in the stored document.
+      final Map<String, dynamic> mapData = Map<String, dynamic>.from(
+        data.toMap(),
+      );
+      mapData['userID'] = auth.currentUser!.uid;
+      if (mapData['mobileNumber'] == null ||
+          (mapData['mobileNumber'] as String).isEmpty) {
+        mapData['mobileNumber'] = auth.currentUser!.phoneNumber;
+      }
+
       await firestore
           .collection('User')
           .doc(auth.currentUser!.uid)
-          .set(data.toMap())
+          .set(mapData, SetOptions(merge: true))
           .whenComplete(() {
             Navigator.pushAndRemoveUntil(
               context,
@@ -107,7 +117,9 @@ class UserDataCRUDServices {
   }
 
   static setActiveStatusById(String addressID, bool isActive) async {
-    await firestore.collection('Address').doc(addressID).update({'isActive': isActive});
+    await firestore.collection('Address').doc(addressID).update({
+      'isActive': isActive,
+    });
   }
 
   static deleteAddress(String addressID) async {

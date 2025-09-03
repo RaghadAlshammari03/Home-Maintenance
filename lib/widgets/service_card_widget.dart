@@ -1,16 +1,12 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:baligny/constant/constant.dart';
-import 'package:baligny/controller/provider/itemOrderProvider/itemOrderProvider.dart';
 import 'package:baligny/controller/services/serviceOrderServices/serviceOrderServices.dart';
 import 'package:baligny/model/servicesModel/servicesModel.dart';
 import 'package:baligny/utils/colors.dart';
 import 'package:baligny/utils/textStyles.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 
-class ServiceCard extends StatefulWidget {
+class ServiceCardWidget extends StatefulWidget {
   final ServiceModel service;
   final bool showAddButton; // for services listing
   final bool showQuantityControls; // for cart / submit screens
@@ -19,7 +15,7 @@ class ServiceCard extends StatefulWidget {
   final VoidCallback? onIncrement;
   final VoidCallback? onDecrement;
 
-  const ServiceCard({
+  const ServiceCardWidget({
     Key? key,
     required this.service,
     this.showAddButton = false,
@@ -31,12 +27,10 @@ class ServiceCard extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ServiceCard> createState() => _ServiceCardState();
+  State<ServiceCardWidget> createState() => _ServiceCardWidgetState();
 }
 
-class _ServiceCardState extends State<ServiceCard> {
-  int quantity = 0;
-
+class _ServiceCardWidgetState extends State<ServiceCardWidget> {
   @override
   Widget build(BuildContext context) {
     final svc = widget.service;
@@ -170,10 +164,7 @@ class _ServiceCardState extends State<ServiceCard> {
                             context,
                           );
                           try {
-                            // If there is an ItemOrderProvider somewhere, refresh it
-                            // ignore: unused_result
                             WidgetsBinding.instance.addPostFrameCallback((_) {
-                              // parent providers usually handle fetch
                             });
                           } catch (_) {}
                         },

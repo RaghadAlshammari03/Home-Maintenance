@@ -84,7 +84,7 @@ class PushNotificationServices {
 
       final filteredTechnicians = allTechnicians.where((tech) {
         final techMajor = tech.major?.trim();
-        return techMajor != null && techMajor == major.trim();
+        return techMajor != null && techMajor == major?.trim();
       }).toList();
 
       log('Found ${filteredTechnicians.length} matching technicians');
@@ -110,7 +110,10 @@ class PushNotificationServices {
                 "title": "طلب جديد: $serviceTitle",
                 "body": serviceDescription,
               },
-              "data": {"serviceOrderID": serviceOrderData.orderID}
+              "data": {
+                "serviceOrderID": serviceOrderData.orderID,
+                "userMobile": serviceOrderData.userData?.mobileNumber ?? '',
+              },
             },
           };
 

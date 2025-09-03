@@ -108,7 +108,7 @@ class _AccountScreenState extends State<AccountScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const HistoryScreenScreen(),
+                                builder: (context) => const HistoryScreen(),
                               ),
                             );
                             break;

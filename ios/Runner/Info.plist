@@ -51,5 +51,11 @@
 	<string>نحن بحاجة إلى موقعك لعرض موقعك الحالي على الخريطة.</string>
 	<key>io.flutter.embedded_views_preview</key>
 	<true/>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need your microphone to record voice notes.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We need access to your camera to take photos and videos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your photo library to select images and videos.</string>
 </dict>
 </plist>
