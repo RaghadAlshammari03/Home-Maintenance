@@ -11,7 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 
 class TechnicianRegistrationScreen extends StatefulWidget {
-  const TechnicianRegistrationScreen({super.key});
+  const TechnicianRegistrationScreen({super.key, this.technician});
+
+  final TechnicianModel? technician;
 
   @override
   State<TechnicianRegistrationScreen> createState() =>
@@ -27,12 +29,29 @@ class _TechnicianRegistrationScreenState
   List<String> majorOptions = ['كهرباء', 'تكييف', 'سباكة'];
 
   @override
+  void initState() {
+    super.initState();
+    // Prefill mobile number if available
+    try {
+      // If the screen was opened for modification, prefill from provided technician
+      if (widget.technician != null) {
+        nameController.text = widget.technician!.name ?? '';
+        mobileNumberController.text = widget.technician!.mobileNumber ??
+            auth.currentUser?.phoneNumber ?? '';
+        selectedMajor = widget.technician!.major;
+      } else {
+        mobileNumberController.text = auth.currentUser?.phoneNumber ?? '';
+      }
+    } catch (_) {}
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
             title: Text(
-              'تعديل معلومات الفني',
+              'Technician Profile',
               style: AppTextStyles.heading20Bold.copyWith(
                 color: white,
                 fontWeight: FontWeight.bold,

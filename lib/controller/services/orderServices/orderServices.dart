@@ -10,19 +10,46 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class OrderServices {
-  static fetchOrderDetails(String orderID) async {
+  static Future<ServiceOrderModel?> fetchOrderDetails(String orderID) async {
     try {
-      final snapshot = await realTimeDatabaseRef
-          .child('Orders')
-          .child(orderID)
-          .get();
+      log('fetchOrderDetails: start for orderID=$orderID');
+      final ref = realTimeDatabaseRef.child('Orders').child(orderID);
+      final snapshot = await ref.get();
+
+      if (!snapshot.exists || snapshot.value == null) {
+        log('fetchOrderDetails: Order $orderID not found (null snapshot)');
+        return null;
+      }
+
+      final raw = snapshot.value;
+      // Log raw snapshot safely (try JSON encode, fallback to toString)
+      try {
+        log(
+          'fetchOrderDetails: raw snapshot for $orderID -> ${jsonEncode(raw)}',
+        );
+      } catch (e) {
+        log(
+          'fetchOrderDetails: raw snapshot for $orderID (toString) -> ${raw.toString()}',
+        );
+      }
+
+      if (raw is! Map) {
+        log(
+          'fetchOrderDetails: Unexpected data type for order $orderID -> ${raw.runtimeType}',
+        );
+        return null;
+      }
+
       ServiceOrderModel serviceData = ServiceOrderModel.fromMap(
-        jsonDecode(jsonEncode(snapshot.value)) as Map<String, dynamic>,
+        Map<String, dynamic>.from(raw as Map),
+      );
+      log(
+        'fetchOrderDetails: parsed ServiceOrderModel orderID=${serviceData.orderID} status=${serviceData.orderStatus}',
       );
       return serviceData;
-    } catch (e) {
-      log(e.toString());
-      throw Exception(e);
+    } catch (e, st) {
+      log('fetchOrderDetails error for $orderID: $e\n$st');
+      return null; // swallow & return null instead of throwing to avoid crashes
     }
   }
 
@@ -62,6 +89,7 @@ class OrderServices {
   ) async {
     ServiceOrderModel serviceData = ServiceOrderModel(
       servicedetail: serviceOrderData.servicedetail,
+      services: serviceOrderData.services,
       userAddress: serviceOrderData.userAddress,
       userData: serviceOrderData.userData,
       technicianData: serviceOrderData.technicianData,
@@ -73,6 +101,8 @@ class OrderServices {
       orderPlacedAt: serviceOrderData.orderPlacedAt,
       orderDeliveredAt: DateTime.now(),
       addedToCartAt: serviceOrderData.addedToCartAt,
+      problemDescription: serviceOrderData.problemDescription,
+      attachedImages: serviceOrderData.attachedImages,
     );
 
     String orderHistoryID = uuid.v1();

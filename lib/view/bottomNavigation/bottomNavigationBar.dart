@@ -1,13 +1,11 @@
 import 'package:baligny_technician/controller/provider/profileProvider/profileProvider.dart';
-import 'package:baligny_technician/controller/provider/technicianProvider/technicianProvider.dart';
 import 'package:baligny_technician/controller/services/pushNotificationServices/pushNotificationServices.dart';
-import 'package:baligny_technician/model/technicianModel/technicianModel.dart';
 import 'package:baligny_technician/utils/colors.dart';
 import 'package:baligny_technician/utils/textStyles.dart';
 import 'package:baligny_technician/view/accountScreen/accountScreen.dart';
 import 'package:baligny_technician/view/homeScreen/homeScreen.dart';
-import 'package:baligny_technician/view/ordersScreen/historyScreen.dart';
 import 'package:baligny_technician/view/ordersScreen/ordersScreen.dart';
+import 'package:baligny_technician/view/ordersScreen/currentOrderScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
@@ -29,36 +27,47 @@ class _BottomNavigationBarBalignyState
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      PushNotificationServices.initializeFCM(context);
       context.read<ProfileProvider>().updateTechnicianProfile();
       // context.read<TechnicianProvider>().createIcons(context);
     });
   }
 
   List<Widget> _buildScreens() {
-    return [const HomeScreen(), const HistoryScreen(), const AccountScreen()];
+    return [
+      const HomeScreen(),
+      const CurrentOrderScreen(),
+      const OrdersScreen(),
+      const AccountScreen(),
+    ];
   }
 
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
-        icon: FaIcon(FontAwesomeIcons.house),
-        title: ("الرئيسية"),
-        textStyle: AppTextStyles.body16,
+        icon: FaIcon(FontAwesomeIcons.house, size: 20),
+        title: ("Home"),
+        textStyle: AppTextStyles.body14,
         activeColorPrimary: lightOrange,
         inactiveColorPrimary: grey,
       ),
       PersistentBottomNavBarItem(
-        icon: FaIcon(FontAwesomeIcons.list),
-        title: ("الطلبات"),
-        textStyle: AppTextStyles.body16,
+        icon: FaIcon(FontAwesomeIcons.clipboardList, size: 20),
+        title: ("Current Order"),
+        textStyle: AppTextStyles.body14,
         activeColorPrimary: lightOrange,
         inactiveColorPrimary: grey,
       ),
       PersistentBottomNavBarItem(
-        icon: FaIcon(FontAwesomeIcons.user),
-        title: ("المزيد"),
-        textStyle: AppTextStyles.body16,
+        icon: FaIcon(FontAwesomeIcons.list, size: 20),
+        title: ("Orders"),
+        textStyle: AppTextStyles.body14,
+        activeColorPrimary: lightOrange,
+        inactiveColorPrimary: grey,
+      ),
+      PersistentBottomNavBarItem(
+        icon: FaIcon(FontAwesomeIcons.user, size: 20),
+        title: ("Account"),
+        textStyle: AppTextStyles.body14,
         activeColorPrimary: lightOrange,
         inactiveColorPrimary: grey,
       ),
@@ -91,7 +100,8 @@ class _BottomNavigationBarBalignyState
         ),
       ),
       confineToSafeArea: true,
-      navBarHeight: kBottomNavigationBarHeight,
+      // make bar a bit taller and use smaller text to avoid overlap on small screens
+      navBarHeight: 60,
       navBarStyle: NavBarStyle.style6,
     );
   }

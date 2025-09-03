@@ -3,9 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter/material.dart';
 
 FirebaseAuth auth = FirebaseAuth.instance;
 FirebaseFirestore firestore = FirebaseFirestore.instance;
 Uuid uuid = const Uuid();
 DatabaseReference realTimeDatabaseRef = FirebaseDatabase.instance.ref();
-final audioPlayer = AudioPlayer(); 
+final audioPlayer = AudioPlayer();
+
+// Global navigator key so background/notification handlers can obtain a valid BuildContext
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

@@ -1,17 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ServiceModel {
-  String id;
-  String name;
-  String detail;
-  String major;
-  String type;
+  String? serviceID;
+  String? name;
+  String? detail;
+  String? major;
+  String? type;
   int? quantity;
   DateTime? addedToCartAt;
   String? orderID;
 
   ServiceModel({
-    required this.id,
+    required this.serviceID,
     required this.name,
     required this.detail,
     required this.major,
@@ -22,7 +22,7 @@ class ServiceModel {
   });
 
   Map<String, dynamic> toMap() => {
-    'id': id,
+    'serviceID': serviceID,
     'name': name,
     'detail': detail,
     'major': major,
@@ -32,18 +32,40 @@ class ServiceModel {
     'orderID': orderID,
   };
 
-  factory ServiceModel.fromMap(Map<String, dynamic> map) => ServiceModel(
-    id: map['id'],
-    name: map['name'],
-    detail: map['detail'],
-    major: map['major'],
-    type: map['type'],
-    quantity: map['quantity'],
-    addedToCartAt: map['addedToCartAt'] != null
-        ? (map['addedToCartAt'] is Timestamp
-              ? (map['addedToCartAt'] as Timestamp).toDate()
-              : DateTime.parse(map['addedToCartAt']))
-        : null,
-    orderID: map['orderID'],
-  );
+  factory ServiceModel.fromMap(Map<String, dynamic> map) {
+    // Handle both 'id' and 'serviceID' for backward compatibility
+    final serviceID = map['serviceID'] ?? map['id'];
+    if (serviceID == null) {
+      throw Exception('Missing required field: serviceID or id');
+    }
+    if (map['name'] == null) {
+      throw Exception('Missing required field: name');
+    }
+    if (map['detail'] == null) {
+      throw Exception('Missing required field: detail');
+    }
+    if (map['major'] == null) {
+      throw Exception('Missing required field: major');
+    }
+    if (map['type'] == null) {
+      throw Exception('Missing required field: type');
+    }
+
+    return ServiceModel(
+      serviceID: serviceID as String,
+      name: map['name'] as String,
+      detail: map['detail'] as String,
+      major: map['major'] as String,
+      type: map['type'] as String,
+      quantity: map['quantity'] != null ? map['quantity'] as int : null,
+      addedToCartAt: map['addedToCartAt'] != null
+          ? (map['addedToCartAt'] is Timestamp
+                ? (map['addedToCartAt'] as Timestamp).toDate()
+                : (map['addedToCartAt'] is String
+                      ? DateTime.tryParse(map['addedToCartAt'])
+                      : null))
+          : null,
+      orderID: map['orderID'] != null ? map['orderID'] as String : null,
+    );
+  }
 }

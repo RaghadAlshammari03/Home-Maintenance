@@ -24,15 +24,24 @@ class _OTPScreenState extends State<OTPScreen> {
       StreamController<ErrorAnimationType>();
   int resendOTPCounter = 60;
 
+  @override
+  void dispose() {
+    errorController.close();
+    super.dispose();
+  }
+
   decreaseOTPCounter() async {
     // Handle the case when the counter reaches zero, enable resending OTP
     if (resendOTPCounter > 0) {
-      setState(() {
-        resendOTPCounter--;
-      });
-      await Future.delayed(const Duration(seconds: 1), () {
+      if (mounted) {
+        setState(() {
+          resendOTPCounter--;
+        });
+      }
+      await Future.delayed(const Duration(seconds: 1));
+      if (mounted) {
         decreaseOTPCounter();
-      });
+      }
     } else {
       // Handle the case when the counter reaches zero, enable resending OTP
     }

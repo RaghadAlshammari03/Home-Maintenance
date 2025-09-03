@@ -9,4 +9,10 @@ class ProfileProvider extends ChangeNotifier {
     technicianProfile = await ProfileServices.getTechnicianProfileData();
     notifyListeners();
   }
+
+  // Clear cached profile data to avoid retaining state after sign-out
+  clearProfile() {
+    technicianProfile = null;
+    notifyListeners();
+  }
 }

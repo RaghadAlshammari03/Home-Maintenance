@@ -5,7 +5,6 @@ import 'dart:convert';
 
 import 'package:baligny_technician/constants/constant.dart';
 import 'package:baligny_technician/controller/provider/technicianProvider/technicianProvider.dart';
-import 'package:baligny_technician/controller/services/geoFireServices/geoFireServices.dart';
 import 'package:baligny_technician/controller/services/locationServices/locationServices.dart';
 import 'package:baligny_technician/controller/services/orderServices/orderServices.dart';
 import 'package:baligny_technician/model/serviceOrderModel/serviceOrderModel.dart';
@@ -15,10 +14,10 @@ import 'package:baligny_technician/utils/textStyles.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:baligny_technician/widgets/toastService.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -43,7 +42,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> getCurrentLocationAndSetCamera() async {
-    final position = await LocationServices.getCurrentLocation();
+    final position = await LocationServices.getCurrentLocation(
+      context: context,
+    );
     if (position != null) {
       currentPosition = CameraPosition(
         target: LatLng(position.latitude, position.longitude),
@@ -111,6 +112,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             orderMap as Map<String, dynamic>,
                           );
                           final currentStatus = serviceOrderData.orderStatus;
+                          // If order is in 'under preparation' state, hide the swipe control
+                          if (currentStatus == OrderServices.orderStatus(0)) {
+                            return const SizedBox.shrink();
+                          }
+                          // Rehydrate state (after cold start) so swipe bar stays in sync
+                          final tp = context.read<TechnicianProvider>();
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            tp.rehydrateFromExistingOrder(
+                              serviceOrderData,
+                              context,
+                            );
+                            tp.startLiveLocationTracking(context);
+                          });
 
                           if (currentStatus == OrderServices.orderStatus(1)) {
                             // SERVICE_ACCEPTED_BY_TECHNICIAN -> show "On the Way" swipe
@@ -128,9 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     .child(
                                       'Orders/${technicianData.activeDeliveryRequestID}/orderStatus',
                                     )
-                                    .set(
-                                      OrderServices.orderStatus(2),
-                                    );
+                                    .set(OrderServices.orderStatus(2));
                               },
                               child: Text(
                                 'On The Way',
@@ -149,6 +161,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               elevationThumb: 2,
                               elevationTrack: 2,
                               onSwipe: () async {
+                                // Show success toast via ToastService
+                                ToastService.sendScaffoldAlert(
+                                  msg: 'Service Done',
+                                  toastStatus: 'SUCCESS',
+                                  context: context,
+                                );
+
                                 await OrderServices.addOrderDataToHistory(
                                   serviceOrderData,
                                   context,
@@ -157,9 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     .child(
                                       'Orders/${technicianData.activeDeliveryRequestID}/orderStatus',
                                     )
-                                    .set(
-                                      OrderServices.orderStatus(3),
-                                    ); 
+                                    .set(OrderServices.orderStatus(3));
 
                                 await realTimeDatabaseRef
                                     .child(
@@ -240,17 +257,55 @@ class _HomeScreenState extends State<HomeScreen> {
                       .child('Orders/${technicianData.activeDeliveryRequestID}')
                       .onValue,
                   builder: (context, serviceOrderEvent) {
-                    if (serviceOrderEvent.data == null) {
+                    if (serviceOrderEvent.connectionState ==
+                        ConnectionState.waiting) {
                       return Center(
                         child: CircularProgressIndicator(color: black),
                       );
                     }
+                    if (!serviceOrderEvent.hasData ||
+                        serviceOrderEvent.data!.snapshot.value == null) {
+                      return Center(
+                        child: Text(
+                          'No service order data available',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      );
+                    }
+
                     final serviceOrderData = ServiceOrderModel.fromMap(
                       jsonDecode(
                             jsonEncode(serviceOrderEvent.data!.snapshot.value),
                           )
                           as Map<String, dynamic>,
                     );
+
+                    // If order status is 'under preparation' treat it as no active order
+                    if (serviceOrderData.orderStatus ==
+                        OrderServices.orderStatus(0)) {
+                      return const Expanded(
+                        child: Center(
+                          child: Text(
+                            'No active order',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+
+                    // Rehydrate map / markers if coming from a cold start
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      final tp = context.read<TechnicianProvider>();
+                      tp.rehydrateFromExistingOrder(serviceOrderData, context);
+                      tp.startLiveLocationTracking(context);
+                    });
+
                     return Expanded(
                       child: currentPosition == null
                           ? Center(
@@ -258,16 +313,129 @@ class _HomeScreenState extends State<HomeScreen> {
                             )
                           : Consumer<TechnicianProvider>(
                               builder: (context, technicianProvider, child) {
-                                return GoogleMap(
-                                  initialCameraPosition: currentPosition!,
-                                  mapType: MapType.normal,
-                                  myLocationButtonEnabled: true,
-                                  myLocationEnabled: true,
-                                  zoomControlsEnabled: true,
-                                  zoomGesturesEnabled: true,
-                                  polylines: technicianProvider
-                                      .polylineSetTowardsCustomer,
-                                  markers: technicianProvider.deliveryMarker,
+                                // Only show the live map when the provider indicates we are in-delivery
+                                if (technicianProvider.inDelivery) {
+                                  return Stack(
+                                    children: [
+                                      GoogleMap(
+                                        initialCameraPosition: currentPosition!,
+                                        mapType: MapType.normal,
+                                        myLocationButtonEnabled: true,
+                                        myLocationEnabled: true,
+                                        zoomControlsEnabled: true,
+                                        zoomGesturesEnabled: true,
+                                        polylines: technicianProvider
+                                            .polylineSetTowardsCustomer,
+                                        markers:
+                                            technicianProvider.deliveryMarker,
+                                      ),
+                                      Positioned(
+                                        top: 8,
+                                        left: 8,
+                                        right: 8,
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 10,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withOpacity(
+                                                  0.08,
+                                                ),
+                                                blurRadius: 8,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                technicianProvider
+                                                        .routeDurationText ??
+                                                    '',
+                                                style: AppTextStyles.body14
+                                                    .copyWith(
+                                                      color: Colors.black87,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                              ),
+                                              Text(
+                                                technicianProvider
+                                                        .routeDistanceText ??
+                                                    '',
+                                                style: AppTextStyles.body14
+                                                    .copyWith(
+                                                      color: Colors.black87,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }
+
+                                // Not in delivery yet (under preparation / leave for later).
+                                // Show compact order card with basic info and an accept hint.
+                                final order = technicianProvider.orderData;
+                                return Padding(
+                                  padding: EdgeInsets.all(12.0),
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    elevation: 2,
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 14,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Current Order',
+                                            style: AppTextStyles.body16Bold,
+                                          ),
+                                          SizedBox(height: 8),
+                                          Text(
+                                            order?.orderID ?? '-',
+                                            style: AppTextStyles.body14,
+                                          ),
+                                          SizedBox(height: 6),
+                                          if (order?.userAddress != null)
+                                            Text(
+                                              order!.userAddress!.apartment,
+                                              style: AppTextStyles.body14
+                                                  .copyWith(
+                                                    color: Colors.black54,
+                                                  ),
+                                            ),
+                                          SizedBox(height: 10),
+                                          Text(
+                                            'Map will appear after you Accept the order',
+                                            style: AppTextStyles.body14
+                                                .copyWith(
+                                                  color: Colors.black54,
+                                                ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 );
                               },
                             ),

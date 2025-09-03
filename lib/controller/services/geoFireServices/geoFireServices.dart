@@ -14,9 +14,12 @@ class GeoFireServices {
       .ref()
       .child('Technician/${auth.currentUser!.uid}/technicianStatus');
 
-  static Future<void> goOnline() async {
+  // Allow optional context to show permission dialogs if needed
+  static Future<void> goOnline({BuildContext? context}) async {
     try {
-      Position? currentPosition = await LocationServices.getCurrentLocation();
+      Position? currentPosition = await LocationServices.getCurrentLocation(
+        context: context,
+      );
 
       if (currentPosition == null) {
         print("لم يتم الحصول على الموقع الحالي");
@@ -34,7 +37,9 @@ class GeoFireServices {
       // Save technician status to Firebase
       await statusRef.set("ONLINE");
       print("تم تفعيل الوضع النشط");
-      print("تم تحديد الموقع: ${currentPosition.latitude}, ${currentPosition.longitude}");
+      print(
+        "تم تحديد الموقع: ${currentPosition.latitude}, ${currentPosition.longitude}",
+      );
     } catch (e) {
       print("حدث خطأ أثناء الذهاب إلى الوضع النشط: $e");
     }
@@ -59,9 +64,9 @@ class GeoFireServices {
       accuracy: LocationAccuracy.bestForNavigation,
       distanceFilter: 10,
     );
-    StreamSubscription<Position> technicianPositionStream =
-        Geolocator.getPositionStream(locationSettings: locationSettings)
-            .listen((event) {
+    Geolocator.getPositionStream(locationSettings: locationSettings).listen((
+      event,
+    ) {
       Geofire.setLocation(
         auth.currentUser!.uid,
         event.latitude,

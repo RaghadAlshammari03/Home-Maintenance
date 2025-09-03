@@ -4,7 +4,9 @@ import 'package:baligny_technician/controller/provider/authProvider/mobileAuthPr
 import 'package:baligny_technician/controller/provider/orderProvider/orderProvider.dart';
 import 'package:baligny_technician/controller/provider/profileProvider/profileProvider.dart';
 import 'package:baligny_technician/controller/provider/technicianProvider/technicianProvider.dart';
+import 'package:baligny_technician/controller/services/pushNotificationServices/pushNotificationServices.dart';
 import 'package:baligny_technician/firebase_options.dart';
+import 'package:baligny_technician/constants/constant.dart';
 import 'package:baligny_technician/view/signInLogicScreen/signInLogicScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -16,13 +18,27 @@ Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await dotenv.load(fileName: ".env");
-  String apiKey = dotenv.env['routesAPI'] ?? 'Key not found';
-  print("API KEY: $apiKey");
   runApp(const Baligny());
 }
 
-class Baligny extends StatelessWidget {
+class Baligny extends StatefulWidget {
   const Baligny({super.key});
+
+  @override
+  State<Baligny> createState() => _BalignyState();
+}
+
+class _BalignyState extends State<Baligny> {
+  @override
+  void initState() {
+    super.initState();
+    // Initialize FCM after first frame so context & providers are ready
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        PushNotificationServices.initializeFCM(context);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +61,14 @@ class Baligny extends StatelessWidget {
           ],
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
+            navigatorKey: navigatorKey,
             title: 'Baligny',
             theme: ThemeData(),
+            // Enforce LTR across the whole app
+            builder: (context, child) => Directionality(
+              textDirection: TextDirection.ltr,
+              child: child!,
+            ),
             home: const SignInLogicScreen(),
           ),
         );

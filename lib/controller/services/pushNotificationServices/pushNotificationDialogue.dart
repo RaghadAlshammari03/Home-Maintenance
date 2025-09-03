@@ -7,7 +7,6 @@ import 'package:baligny_technician/controller/provider/orderProvider/orderProvid
 import 'package:baligny_technician/controller/provider/technicianProvider/technicianProvider.dart';
 import 'package:baligny_technician/controller/services/locationServices/locationServices.dart';
 import 'package:baligny_technician/controller/services/orderServices/orderServices.dart';
-import 'package:baligny_technician/model/serviceOrderModel/serviceOrderModel.dart';
 import 'package:baligny_technician/utils/colors.dart';
 import 'package:baligny_technician/utils/textStyles.dart';
 import 'package:flutter/material.dart';
@@ -19,17 +18,14 @@ import 'package:sizer/sizer.dart';
 
 class PushNotificationDialogue {
   static serviceRequestDialogue(String orderID, BuildContext context) async {
-    audioPlayer
-        .setAsset('assets/sounds/alert.mp3')
-        .then((_) {
-          audioPlayer.play();
-        })
-        .catchError((e) {
-          log("Audio error: $e");
-        });
-    ServiceOrderModel serviceOrderData = await OrderServices.fetchOrderDetails(
-      orderID,
-    );
+    // Audio playback disabled temporarily to avoid crashes when dialog is opened from notifications
+    log('Audio playback disabled for notification dialog (temporary).');
+
+    final serviceOrderData = await OrderServices.fetchOrderDetails(orderID);
+    if (serviceOrderData == null) {
+      log('Order $orderID not found, dialog aborted');
+      return;
+    }
     return showDialog(
       context: context,
       barrierDismissible: false,
@@ -73,9 +69,12 @@ class PushNotificationDialogue {
                     elevationThumb: 2,
                     elevationTrack: 2,
                     onSwipe: () async {
+                      // mark order as under preparation
                       await realTimeDatabaseRef
                           .child('Orders/$orderID/orderStatus')
                           .set(OrderServices.orderStatus(0));
+
+                      // do not start live tracking or mark inDelivery true for 'under preparation'
 
                       audioPlayer.stop();
                       Navigator.pop(context);
@@ -98,11 +97,21 @@ class PushNotificationDialogue {
                       await realTimeDatabaseRef
                           .child('Orders/$orderID/orderStatus')
                           .set(OrderServices.orderStatus(1));
-                          
+
                       Position? technicianPosition =
-                          await LocationServices.getCurrentLocation();
+                          await LocationServices.getCurrentLocation(
+                            context: context,
+                          );
+                      if (technicianPosition == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Unable to access current location'),
+                          ),
+                        );
+                        return;
+                      }
                       LatLng technician = LatLng(
-                        technicianPosition!.latitude,
+                        technicianPosition.latitude,
                         technicianPosition.longitude,
                       );
                       LatLng customer = LatLng(
@@ -121,18 +130,23 @@ class PushNotificationDialogue {
                           .read<TechnicianProvider>()
                           .fetchCrrLocationToCustomerPolyline(context);
 
-                      ServiceOrderModel orderData =
-                          await OrderServices.fetchOrderDetails(orderID);
-                      context.read<TechnicianProvider>().updateOrderData(
-                        orderData,
+                      final orderData = await OrderServices.fetchOrderDetails(
+                        orderID,
                       );
-                      context.read<OrderProvider>().updateServiceOrderData(
-                        orderData,
-                      );
+                      if (orderData != null) {
+                        context.read<TechnicianProvider>().updateOrderData(
+                          orderData,
+                        );
+                        context.read<OrderProvider>().updateServiceOrderData(
+                          orderData,
+                        );
+                      }
                       context.read<TechnicianProvider>().updateInDeliveryStatus(
                         true,
                       );
-                      context.read<TechnicianProvider>().updateMarker(context);
+                      await context
+                          .read<TechnicianProvider>()
+                          .startLiveLocationTracking(context);
 
                       audioPlayer.stop();
                       Navigator.pop(context);

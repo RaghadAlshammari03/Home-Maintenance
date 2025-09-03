@@ -45,5 +45,20 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<!-- Location permission descriptions required by iOS -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>App requires your location to provide navigation and delivery tracking while using the app.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>App needs access to your location in the background to continue tracking deliveries when the app is not in the foreground.</string>
+	<!-- Legacy key for older iOS versions -->
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>App needs access to your location to continue tracking deliveries.</string>
+
+	<!-- Allow background location updates -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+	</array>
 </dict>
 </plist>

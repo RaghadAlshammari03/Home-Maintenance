@@ -1,23 +1,16 @@
 import 'dart:developer';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter/material.dart';
+import 'package:baligny_technician/utils/location_permission.dart';
 
 class LocationServices {
-  static Future<Position?> getCurrentLocation() async {
-    // Check if GPS is enabled
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      log("خدمات الموقع غير مفعلة، الرجاء تفعيلها من إعدادات الجوال");
-      return null;
-    }
-
-    // Check permission status
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      log("خدمات الموقع غير مفعلة، الرجاء تفعيلها من إعدادات الجوال");
+  static Future<Position?> getCurrentLocation({BuildContext? context}) async {
+    // Ensure device/service and runtime permissions are OK
+    final granted = await LocationPermissionHelper.ensurePermission(
+      context: context,
+    );
+    if (!granted) {
+      log("Location permission/service not granted");
       return null;
     }
 
